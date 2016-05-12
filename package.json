@@ -1,0 +1,43 @@
+{
+  "name": "jp-api",
+  "version": "0.0.1",
+  "description": "API for Jungo application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JPodz/jungo.git"
+  },
+  "author": "justin.podzimek@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JPodz/jungo/issues"
+  },
+  "publishConfig": {
+    "registry": "http://npm.jpodzimek.com"
+  },
+  "homepage": "https://github.com/JPodz/jungo#readme",
+  "dependencies": {
+    "bcrypt": "^0.8.6",
+    "body-parser": "^1.15.0",
+    "config": "^1.20.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
+    "js-yaml": "^3.5.5",
+    "lodash": "^4.11.1",
+    "moment": "^2.13.0",
+    "mysql": "^2.10.2",
+    "q": "^1.4.1",
+    "rand-token": "^0.2.1",
+    "slug": "^0.9.1"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-apidoc": "^0.11.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-env": "^0.4.4",
+    "grunt-express-server": "^0.5.2"
+  }
+}

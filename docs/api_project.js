@@ -1,0 +1,1 @@
+define({  "name": "jungo-api",  "version": "1.0.0",  "description": "API for Jungo application",  "sampleUrl": false,  "apidoc": "0.2.0",  "generator": {    "name": "apidoc",    "time": "2016-04-26T01:29:45.642Z",    "url": "http://apidocjs.com",    "version": "0.16.1"  }});
