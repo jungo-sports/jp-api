@@ -1,24 +1,24 @@
 {
   "name": "jp-api",
-  "version": "0.0.1",
-  "description": "API for Jungo application",
+  "version": "0.0.2",
+  "description": "API",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JPodz/jungo.git"
+    "url": "git+https://github.com/JPodz/jp-api.git"
   },
   "author": "justin.podzimek@gmail.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/JPodz/jungo/issues"
+    "url": "https://github.com/JPodz/jp-api/issues"
   },
   "publishConfig": {
     "registry": "http://npm.jpodzimek.com"
   },
-  "homepage": "https://github.com/JPodz/jungo#readme",
+  "homepage": "https://github.com/JPodz/jp-api",
   "dependencies": {
     "bcrypt": "^0.8.6",
     "body-parser": "^1.15.0",
