@@ -22,7 +22,7 @@ BaseController.prototype.__registerMethod = function(method, endpoint, callback,
     options = (options instanceof Object) ? options : {};
     this.app[method](this.options.path + endpoint, function(request, response) {
 
-        var loggedInUser = request.api.loggedInUser;
+        var loggedInUser = (request.api) ? request.api.loggedInUser : null;
 
         // Endpoint requires user to be logged in
         if ((options.loggedIn || options.loggedInAs) && (!loggedInUser || !loggedInUser.id)) {

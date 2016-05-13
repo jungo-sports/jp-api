@@ -29,7 +29,7 @@ HealthCheckController.prototype.registerAllMethods = function() {
  * @param   {Response}      response        Response object
  */
 HealthCheckController.prototype.getServiceStatus = function(request, response) {
-    this.sendJson(response, {
+    this.sendSuccess(response, {
         running: true
     });
 };
