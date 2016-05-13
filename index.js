@@ -15,8 +15,19 @@ healthCheckController.init();
 userController.init();
 ratingController.init();
 
-app.listen(3000, function() {
-    console.log('Server listening on port 3000');
-});
+function start(options) {
+    options = (options instanceof Object) ? options : {};
 
-module.exports = app;
+    var port = options.port || 3000;
+
+    app.listen(port, function() {
+        console.log('JP API listening on port ' + port);
+    });
+};
+
+module.exports = {
+    start: start,
+    middleware: {
+        session: sessionMiddleware
+    }
+};
