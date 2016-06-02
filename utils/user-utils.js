@@ -1,4 +1,4 @@
-var bcrypt = require('bcrypt'),
+var bcrypt = require('bcryptjs'),
     q = require('q');
 
 function UserUtils() {};
