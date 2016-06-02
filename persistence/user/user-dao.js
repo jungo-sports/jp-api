@@ -67,6 +67,30 @@ UserDao.prototype.getAllUsers = function(offset, limit, options) {
     );
 };
 
+UserDao.prototype.getUserExtraData = function(userId) {
+    return this.executeReadQuery(
+        'SELECT field, value FROM users_extra_data WHERE userid = ?',
+        [
+            userId
+        ]
+    );
+};
+
+UserDao.prototype.updateUser = function(user) {
+    return this.executeWriteQuery(
+        'UPDATE users SET ? WHERE id = ?',
+        [
+            {
+                username: user.username,
+                slug: user.slug,
+                email: user.email,
+                role: user.role
+            },
+            user.id
+        ]
+    );
+};
+
 UserDao.prototype.createUser = function(user) {
     var deferred = q.defer();
     this.executeWriteQuery(
@@ -74,7 +98,8 @@ UserDao.prototype.createUser = function(user) {
         {
             username: user.username,
             slug: user.slug,
-            email: user.email
+            email: user.email,
+            role: user.role
         }
     )
     .then(
@@ -103,8 +128,15 @@ UserDao.prototype.createUser = function(user) {
     return deferred.promise;
 };
 
-UserDao.prototype.updateUser = function(user) {
-    
+UserDao.prototype.createUserExtraData = function(userId, field, value) {
+    return this.executeWriteQuery(
+        'INSERT INTO users_extra_data SET ? ON DUPLICATE KEY UPDATE `field` = VALUES(`field`), `value` = VALUES(`value`)',
+        {
+            userid: userId,
+            field: field,
+            value: value
+        }
+    );
 };
 
 UserDao.prototype.deleteUserById = function(id) {

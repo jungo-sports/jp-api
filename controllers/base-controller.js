@@ -105,6 +105,10 @@ BaseController.prototype.sendNotFoundError = function(response, data) {
     __sendResponse(404, data || {}, response);
 };
 
+BaseController.prototype.sendBadRequestError = function(response, data) {
+    __sendResponse(400, data || {}, response);
+};
+
 /**
  * Abstract method to register all methods for the controller
  *

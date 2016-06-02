@@ -55,7 +55,15 @@ RatingService.prototype.getAverageRatings = function(entity, types) {
     return q.all(promises)
         .then(
             function onSuccess(data) {
-                return _.map(data, function(rating) {
+                return _.map(data, function(rating, index) {
+                    if (!rating || _.isEmpty(rating)) {
+                        rating = {
+                            type: types[index],
+                            rating: 0,
+                            total: 0,
+                            entity: entity
+                        };
+                    }
                     return new AverageRating(rating);
                 });
             }

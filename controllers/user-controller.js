@@ -329,7 +329,22 @@ UserController.prototype.resetUserPassword = function(request, response) {
 };
 
 UserController.prototype.updateUserById = function(request, response) {
-
+    var _this = this;
+    UserService.updateUserById(request.params.userid, request.body)
+        .then(
+            function onSuccess(data) {
+                _this.sendCreatedSuccess(response, data);
+            },
+            function onError(error) {
+                if (error && (error instanceof Error)) {
+                    error = error.message;
+                }
+                _this.sendServerError(response, {
+                    created: false,
+                    error: error || 'Error creating user'
+                });
+            }
+        );
 };
 
 UserController.prototype.deleteUserById = function(request, response) {

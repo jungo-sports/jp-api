@@ -20,7 +20,6 @@ RatingController.prototype.registerAllMethods = function() {
     this.registerGetMethod('/entity/:entity/type/:types', this.getAverageRatings);
 
     this.registerPostMethod('/', this.createRating);
-
 };
 
 RatingController.prototype.getRatingsByUserId = function(request, response) {

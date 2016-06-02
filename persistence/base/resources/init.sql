@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(255) NOT NULL DEFAULT '',
   `slug` varchar(255) NOT NULL DEFAULT '',
   `email` varchar(255) NOT NULL DEFAULT '',
+  `role` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`),
   UNIQUE KEY `email` (`email`)
@@ -11,7 +12,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `users_sessions` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `userid` int(11) unsigned NOT NULL,
-  `token` varchar(16) NOT NULL DEFAULT '',
+  `token` varchar(32) NOT NULL DEFAULT '',
+  `expires` datetime NOT NULL,
+  `ipaddress` varchar(15) DEFAULT NULL,
+  `useragent` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `userid` (`userid`),
   CONSTRAINT `users_sessions_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
@@ -24,6 +28,16 @@ CREATE TABLE IF NOT EXISTS `users_authentications` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `userid_unique` (`userid`),
   CONSTRAINT `users_authentications_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `users_extra_data` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(11) unsigned NOT NULL,
+  `field` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userid` (`userid`,`field`),
+  CONSTRAINT `users_extra_data_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `ratings` (
@@ -45,4 +59,4 @@ CREATE TABLE IF NOT EXISTS `ratings_aggregates` (
   `total` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `entity` (`entity`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

@@ -1,4 +1,5 @@
-var q = require('q'),
+var _ = require('lodash'),
+    q = require('q'),
     slug = require('slug'),
     UserDao = require('../persistence/user/user-dao'),
     SessionDao = require('../persistence/user/session-dao'),
@@ -10,6 +11,31 @@ var q = require('q'),
 
 function UserService() {};
 
+function __getUserByCriteria(criteria) {
+    var user;
+    return UserDao.getUserByCriteria(criteria)
+        .then(
+            function onSuccess(data) {
+                user = data;
+                if (user && user.id) {
+                    return UserDao.getUserExtraData(user.id);
+                }
+                return data;
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                if (!data || data.length === 0) {
+                    return user;
+                }
+                _.forEach(data, function(value) {
+                    user[value.field] = value.value;
+                });
+                return user;
+            }
+        );
+}
+
 UserService.prototype.getAllUsers = function(offset, limit, options) {
     options = (options instanceof Object) ? options : {};
     return UserDao.getAllUsers(offset, limit, {
@@ -18,13 +44,13 @@ UserService.prototype.getAllUsers = function(offset, limit, options) {
 };
 
 UserService.prototype.getUserById = function(id) {
-    return UserDao.getUserByCriteria({
+    return __getUserByCriteria({
         id: id
     });
 };
 
 UserService.prototype.getUserByEmail = function(email) {
-    return UserDao.getUserByCriteria({
+    return __getUserByCriteria({
         email: email
     });
 };
@@ -34,7 +60,7 @@ UserService.prototype.getUserByUsername = function(username) {
 };
 
 UserService.prototype.getUserBySlug = function(slug) {
-    return UserDao.getUserByCriteria({
+    return __getUserByCriteria({
         slug: slug
     });
 };
@@ -95,6 +121,17 @@ UserService.prototype.createUser = function(user) {
                     return AuthenticationDao.createUserAuthentication(data.id, user.password);
                 }
                 return data;
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                var extraData = [];
+                _.forOwn(user.extra, function(value, key) {
+                    extraData.push(
+                        UserDao.createUserExtraData(user.id, key, value)
+                    );
+                });
+                return q.all(extraData);
             }
         )
         .then(
@@ -178,13 +215,28 @@ UserService.prototype.resetUserPassword = function(email, token) {
     return deferred.promise;
 };
 
-UserService.prototype.updateUser = function(user) {
+UserService.prototype.updateUserById = function(id, user) {
+    var _this = this;
     user = (user instanceof Object) ? user : {};
-    if (!user.id) {
-        return;
-    }
+    user.id = id;
     user = new User(user);
-    return UserDao.updateUser(user);
+    return UserDao.updateUser(user)
+        .then(
+            function onSuccess(data) {
+                var extraData = [];
+                _.forOwn(user.extra, function(value, key) {
+                    extraData.push(
+                        UserDao.createUserExtraData(user.id, key, value)
+                    );
+                });
+                return q.all(extraData);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                return _this.getUserById(user.id);
+            }
+        );;
 };
 
 UserService.prototype.deleteUserById = function(id) {

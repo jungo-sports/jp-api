@@ -2,13 +2,24 @@ var _ = require('lodash');
 
 function User(data) {
     data = (data instanceof Object) ? data : {};
-    return _({
+
+    var user = _({
         id: data.id,
         username: data.username,
         slug: data.slug,
         email: data.email,
-        password: data.password
-    }).omitBy(_.isUndefined).value(); // Only 'undefined' values removed, 'null' is valid
+        password: data.password,
+        role: parseInt(data.role),
+        extra: {}
+    }).omitBy(_.isUndefined).value();
+
+    _.forOwn(data, function(value, key) {
+        if (!user[key] && !user.extra[key]) {
+            user.extra[key] = value;
+        }
+    });
+
+    return user;
 }
 
 module.exports = User;
