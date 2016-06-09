@@ -60,3 +60,15 @@ CREATE TABLE IF NOT EXISTS `ratings_aggregates` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `entity` (`entity`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `followers` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(11) unsigned NOT NULL,
+  `followerid` int(11) unsigned NOT NULL,
+  `followdate` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userid` (`userid`,`followerid`),
+  KEY `followerid` (`followerid`),
+  CONSTRAINT `followers_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`),
+  CONSTRAINT `followers_ibfk_2` FOREIGN KEY (`followerid`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;

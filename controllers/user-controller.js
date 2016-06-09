@@ -164,7 +164,7 @@ function __getUserBySuccess(response, data) {
 };
 
 function __getUserByError(response, error) {
-    _this.sendServerError(response, {
+    this.sendServerError(response, {
         error: error || 'Error looking up user'
     });
 };

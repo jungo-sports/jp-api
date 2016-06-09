@@ -16,4 +16,23 @@ DatabaseUtils.prototype.getSortByForQuery = function(sort) {
     return sort + ' ' + direction;
 };
 
+DatabaseUtils.prototype.getErrorByCode = function(code) {
+    var message;
+    switch(code) {
+        case 'ER_BAD_NULL_ERROR':
+            message = '(invalid values specified)';
+            break;
+        case 'ER_DUP_ENTRY':
+            message = '(duplicate entry)';
+            break;
+        case 'ER_NO_REFERENCED_ROW_2':
+            message = '(no user found)';
+            break;
+        default:
+            message = '(unknown)';
+            break;
+    }
+    return message;
+};
+
 module.exports = new DatabaseUtils();
