@@ -71,4 +71,36 @@ CREATE TABLE IF NOT EXISTS `followers` (
   KEY `followerid` (`followerid`),
   CONSTRAINT `followers_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`),
   CONSTRAINT `followers_ibfk_2` FOREIGN KEY (`followerid`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `events` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) NOT NULL DEFAULT '',
+  `entity` varchar(255) NOT NULL DEFAULT '',
+  `extra` varchar(255) DEFAULT NULL,
+  `createddate` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `feeds` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(11) unsigned NOT NULL,
+  `eventid` int(11) unsigned NOT NULL,
+  `createddate` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`),
+  KEY `eventid` (`eventid`),
+  CONSTRAINT `feeds_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`),
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(11) unsigned NOT NULL,
+  `eventid` int(11) unsigned NOT NULL,
+  `createddate` datetime NOT NULL,
+  `unread` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`),
+  KEY `eventid` (`eventid`),
+  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`),
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

@@ -21,16 +21,18 @@ NotificationController.prototype.registerAllMethods = function() {
 };
 
 NotificationController.prototype.registerEventListeners = function() {
+
     EventService.subscribeToEvent(EventService.keys.FOLLOW_ADD, function onFollowAdd(data) {
-        NotificationService.addEvent(
+        EventService.addEvent(
             new NotificationEvent({
                 type: EventTypes.types.FOLLOW_ADD,
                 entity: data.id
             })
         );
     });
+
     EventService.subscribeToEvent(EventService.keys.FOLLOW_REMOVE, function onFollowRemove(data) {
-        NotificationService.removeEvent(
+        EventService.removeEvent(
             new NotificationEvent({
                 type: EventTypes.types.FOLLOW_ADD,
                 entity: data.id

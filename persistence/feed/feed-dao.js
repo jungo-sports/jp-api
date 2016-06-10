@@ -10,10 +10,10 @@ function Dao() {
 
 util.inherits(Dao, BaseDao);
 
-Dao.prototype.addNotificationEvent = function(userId, eventId) {
+Dao.prototype.addFeedEvent = function(userId, eventId) {
     var deferred = q.defer();
     this.executeWriteQuery(
-        'INSERT INTO notifications SET ?',
+        'INSERT INTO feeds SET ?',
         {
             userid: userId,
             eventid: eventId,
@@ -27,10 +27,10 @@ Dao.prototype.addNotificationEvent = function(userId, eventId) {
                     id: data.insertId
                 });
             }
-            deferred.reject('Unknown error adding notification');
+            deferred.reject('Unknown error adding feed event');
         },
         function onError(error) {
-            deferred.reject('Error adding notification ' + databaseUtils.getErrorByCode(error.code));
+            deferred.reject('Error adding feed event ' + databaseUtils.getErrorByCode(error.code));
         }
     );
     return deferred.promise;

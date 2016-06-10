@@ -5,6 +5,10 @@ var q = require('q'),
 
 function FollowService() {};
 
+FollowService.prototype.getFollowerById = function(id) {
+    return FollowDao.getFollowerById(id);
+};
+
 FollowService.prototype.getIsUserFollowing = function(userId, followerId) {
     return FollowDao.getFollower(userId, followerId)
         .then(

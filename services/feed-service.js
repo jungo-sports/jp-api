@@ -1,8 +1,9 @@
-var q = require('q');
+var q = require('q'),
+    EventDistribution = require('../models/event-distribution-model');
 
-function NotificationService() {};
+function FeedService() {};
 
-NotificationService.prototype.distributeEvent = function(event) {
+FeedService.prototype.distributeEvent = function(event) {
     var deferred = q.defer();
     if (!EventDistribution.shouldDistributeToFeed(event)) {
         deferred.resolve('Event not permitted for distribution');
@@ -12,4 +13,4 @@ NotificationService.prototype.distributeEvent = function(event) {
     return deferred.promise;
 };
 
-module.exports = new NotificationService();
+module.exports = new FeedService();
