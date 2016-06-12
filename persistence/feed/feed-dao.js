@@ -36,4 +36,33 @@ Dao.prototype.addFeedEvent = function(userId, eventId) {
     return deferred.promise;
 };
 
+Dao.prototype.getFeedEvents = function(userId, offset, limit) {
+    return this.executeReadQuery(
+        'SELECT * FROM feeds WHERE userid = ? ORDER BY createddate DESC LIMIT ?, ?',
+        [
+            userId,
+            offset,
+            limit
+        ]
+    )
+};
+
+Dao.prototype.getTotalFeedEvents = function(userId) {
+    return this.executeReadQuery(
+        'SELECT COUNT(*) AS total FROM feeds, events WHERE userid = ? AND events.id = feeds.eventid',
+        [
+            userId
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            data = (data instanceof Array) ? data : [];
+            if (data.length > 0) {
+                data = data[0];
+            }
+            return data.total || 0;
+        }
+    );
+};
+
 module.exports = new Dao();

@@ -8,7 +8,8 @@ module.exports = {
         rating: require('./controllers/rating-controller'),
         healthcheck: require('./controllers/health-check-controller'),
         follow: require('./controllers/follow-controller'),
-        notification: require('./controllers/notification-controller')
+        notification: require('./controllers/notification-controller'),
+        feed: require('./controllers/feed-controller')
     },
     services: {
         user: require('./services/user-service'),

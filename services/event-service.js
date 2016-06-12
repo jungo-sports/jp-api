@@ -3,12 +3,11 @@ var _ = require('lodash'),
     pubsub = require('pubsub-js'),
     EventTypes = require('../models/event-types-model'),
     EventDistribution = require('../models/event-distribution-model'),
-    EventDistributorMap = require('./events/event-distributor-map'),
+    EventMap = require('./events/event-map'),
     EventDao = require('../persistence/event/event-dao'),
     NotificationDao = require('../persistence/notification/notification-dao'),
-    FeedDao = require('../persistence/feed/feed-dao'),
-    NotificationService = require('./notification-service'),
-    FeedService = require('./feed-service');
+    NotificationEventAction = require('../models/notification-event-action-model'),
+    FeedDao = require('../persistence/feed/feed-dao');
 
 function EventService() {
     this.keys = EventTypes.types;
@@ -16,7 +15,7 @@ function EventService() {
 
 function __distributeEventToType(type, event) {
     var deferred = q.defer();
-    EventDistributorMap.getDistributorForType(event.type)
+    EventMap.getEventForType(event.type)
         .then(
             function onSuccess(distributor) {
                 if (!distributor) {
@@ -42,6 +41,36 @@ function __distributeEventToType(type, event) {
                     }
                 });
                 return q.all(insertMethods);
+            }
+        );
+    return deferred.promise;
+};
+
+function __getActionsForEvent(event) {
+    var deferred = q.defer();
+    EventMap.getEventForType(event.type)
+        .then(
+            function onSuccess(distributor) {
+                if (!distributor) {
+                    return deferred.resolve(true);
+                }
+                return distributor['getActionForEvent'](event);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                deferred.resolve(
+                    new NotificationEventAction({
+                        event: event,
+                        action: data
+                    })
+                );
+            }
+        )
+        .catch(
+            function onError(error) {
+                console.error('Error getting action for event', event, error);
+                deferred.resolve({});
             }
         );
     return deferred.promise;
@@ -88,6 +117,19 @@ EventService.prototype.distributeEvent = function(event) {
             __distributeEventToType('notifications', event)
         ]
     );
+};
+
+EventService.prototype.getEventsByIds = function(ids) {
+    return EventDao.getEventsByIds(ids)
+        .then(
+            function onSuccess(data) {
+                return q.all(
+                    _.map(data, function(event) {
+                        return __getActionsForEvent(event);
+                    })
+                );
+            }
+        );
 };
 
 module.exports = new EventService();

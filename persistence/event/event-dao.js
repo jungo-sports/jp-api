@@ -27,6 +27,15 @@ EventDao.prototype.getEventById = function(id) {
     );
 };
 
+EventDao.prototype.getEventsByIds = function(ids) {
+    return this.executeReadQuery(
+        'SELECT * FROM events WHERE id IN (?)',
+        [
+            ids.join(',')
+        ]
+    );
+};
+
 EventDao.prototype.addEvent = function(type, entity, extra) {
     var deferred = q.defer();
     this.executeWriteQuery(

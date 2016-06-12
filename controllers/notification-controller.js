@@ -10,18 +10,38 @@ function NotificationController(app) {
         return new NotificationController(app);
     }
     BaseController.call(this, app, {
-        path: '/notification'
+        path: '/notifications'
     });
 };
 
 util.inherits(NotificationController, BaseController);
 
 NotificationController.prototype.registerAllMethods = function() {
+    this.registerGetMethod('/user/id/:userid', this.getNotificationsByUserId)
+};
 
+NotificationController.prototype.getNotificationsByUserId = function(request, response) {
+    var _this = this,
+        userId = request.params.userid,
+        offset = request.query.offset || 0,
+        limit = request.query.limit || 20;
+    NotificationService.getNotificationsByUserId(userId, offset, limit)
+        .then(
+            function onSuccess(data) {
+                _this.sendSuccess(response, data);
+            },
+            function onError(error) {
+                if (error && (error instanceof Error)) {
+                    error = error.message;
+                }
+                _this.sendServerError(response, {
+                    error: error || 'Error getting notifications'
+                });
+            }
+        );
 };
 
 NotificationController.prototype.registerEventListeners = function() {
-
     EventService.subscribeToEvent(EventService.keys.FOLLOW_ADD, function onFollowAdd(data) {
         EventService.addEvent(
             new NotificationEvent({

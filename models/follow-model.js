@@ -6,7 +6,9 @@ function Follow(data) {
         id: data.id,
         userid: data.userid,
         followerid: data.followerid,
-        followdate: data.followdate
+        followdate: data.followdate,
+        user: data.user || undefined,
+        follower: data.follower || undefined
     }).omitBy(_.isUndefined).value();
 }
 
