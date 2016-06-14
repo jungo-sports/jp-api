@@ -37,12 +37,11 @@ Dao.prototype.addNotificationEvent = function(userId, eventId) {
 };
 
 Dao.prototype.getNotifications = function(userId, offset, limit) {
+    var limitQuery = databaseUtils.getLimitForQuery(offset, limit);
     return this.executeReadQuery(
-        'SELECT * FROM notifications WHERE userid = ? ORDER BY createddate DESC LIMIT ?, ?',
+        'SELECT * FROM notifications WHERE userid = ? ORDER BY createddate DESC LIMIT ' + limitQuery,
         [
-            userId,
-            offset,
-            limit
+            userId
         ]
     )
 };

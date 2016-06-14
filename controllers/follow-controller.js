@@ -17,14 +17,14 @@ FollowController.prototype.registerAllMethods = function() {
 
     this.registerPostMethod('/', this.addFollower);
 
-    this.registerDeleteMethod('/', this.removeFollower);
+    this.registerDeleteMethod('/user/id/:userid/follower/id/:followerid', this.removeFollower);
 
 };
 
 FollowController.prototype.addFollower = function(request, response) {
     var _this = this,
-        userId = request.body.userId,
-        followerId = request.body.followerId;
+        userId = request.body.userid,
+        followerId = request.body.followerid;
 
     FollowService.addFollower(userId, followerId)
         .then(
@@ -44,8 +44,8 @@ FollowController.prototype.addFollower = function(request, response) {
 
 FollowController.prototype.removeFollower = function(request, response) {
     var _this = this,
-        userId = request.body.userId,
-        followerId = request.body.followerId;
+        userId = request.params.userid,
+        followerId = request.params.followerid;
 
     FollowService.removeFollower(userId, followerId)
         .then(

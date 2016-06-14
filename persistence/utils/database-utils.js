@@ -1,8 +1,8 @@
 function DatabaseUtils() {};
 
 DatabaseUtils.prototype.getLimitForQuery = function(offset, limit) {
-    offset = (isNaN(offset)) ? 0 : offset;
-    limit = (isNaN(limit)) ? 0 : limit;
+    offset = (isNaN(offset)) ? 0 : parseInt(offset);
+    limit = (isNaN(limit)) ? 0 : parseInt(limit);
     return [offset, limit].join(',');
 };
 
