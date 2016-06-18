@@ -7,7 +7,9 @@ var _ = require('lodash'),
     User = require('../models/user-model'),
     NotFoundError = require('../models/errors/not-found-error'),
     stringUtils = require('../utils/string-utils'),
-    dateUtils = require('../utils/date-utils');
+    dateUtils = require('../utils/date-utils'),
+    SearchService = require('./search-service'),
+    EventService = require('./event-service');
 
 function UserService() {};
 
@@ -41,6 +43,10 @@ UserService.prototype.getAllUsers = function(offset, limit, options) {
     return UserDao.getAllUsers(offset, limit, {
         sort: options.sort || '-id'
     });
+};
+
+UserService.prototype.searchUsers = function(parameters, offset, limit, sort) {
+
 };
 
 UserService.prototype.getUserById = function(id) {
@@ -137,6 +143,12 @@ UserService.prototype.createUser = function(user) {
         .then(
             function onSuccess(data) {
                 return _this.getUserById(user.id);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                EventService.publishEvent(EventService.keys.USER_ADD, data);
+                return data;
             }
         );
 };

@@ -1,4 +1,5 @@
-var util = require('util'),
+var _ = require('lodash'),
+    util = require('util'),
     BaseController = require('./base-controller'),
     RatingService = require('../services/rating-service');
 
@@ -41,11 +42,34 @@ RatingController.prototype.getRatingsByUserId = function(request, response) {
 };
 
 RatingController.prototype.getAverageRatings = function(request, response) {
-    var _this = this;
-    RatingService.getAverageRatings(request.params.entity, request.params.types.split(','))
+    var _this = this,
+        types = request.params.types.split(','),
+        entity = request.params.entity,
+        asUserId = request.query.asuserid;
+    RatingService.getAverageRatings(entity, types)
         .then(
             function onSuccess(data) {
-                _this.sendSuccess(response, data);
+                if (!asUserId) {
+                    _this.sendSuccess(response, data);
+                } else {
+                    var ratings = data;
+                    RatingService.getRatingsByUserId(asUserId, entity, types)
+                        .then(
+                            function onSuccess(data) {
+                                _.forEach(ratings, function(rating) {
+                                    var userRating = _.find(data, {
+                                        type: rating.type,
+                                        entity: rating.entity
+                                    });
+                                    rating.userRating = (userRating && userRating.rating) ? userRating.rating : 0;
+                                });
+                                _this.sendSuccess(response, ratings);
+                            },
+                            function onError(error) {
+                                _this.sendSuccess(response, ratings);
+                            }
+                        );
+                }
             },
             function onError(error) {
                 if (error && (error instanceof Error)) {

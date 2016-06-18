@@ -14,7 +14,9 @@ module.exports = {
     services: {
         user: require('./services/user-service'),
         rating: require('./services/rating-service'),
-        follow: require('./services/follow-service')
+        follow: require('./services/follow-service'),
+        event: require('./services/event-service'),
+        search: require('./services/search-service')
     },
     models: {
         user: require('./models/user-model')

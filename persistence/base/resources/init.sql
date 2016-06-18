@@ -44,9 +44,10 @@ CREATE TABLE IF NOT EXISTS `ratings` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `userid` int(11) unsigned NOT NULL,
   `entity` varchar(255) NOT NULL DEFAULT '',
-  `type` int(2) NOT NULL,
+  `type` varchar(255) NOT NULL DEFAULT '',
   `rating` decimal(3,1) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `userid_2` (`userid`,`entity`,`type`),
   KEY `userid` (`userid`),
   CONSTRAINT `ratings_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `ratings` (
 CREATE TABLE IF NOT EXISTS `ratings_aggregates` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `entity` varchar(255) NOT NULL DEFAULT '',
-  `type` int(2) NOT NULL,
+  `type` varchar(255) NOT NULL DEFAULT '',
   `rating` decimal(3,1) NOT NULL,
   `total` int(11) NOT NULL,
   PRIMARY KEY (`id`),

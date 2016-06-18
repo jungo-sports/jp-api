@@ -79,7 +79,6 @@ RatingService.prototype.getRatingsByUserId = function(userId, entityId, types) {
     return q.all(promises)
         .then(
             function onSuccess(data) {
-                console.log(data);
                 return _.map(data, function(rating) {
                     return new Rating(rating);
                 });

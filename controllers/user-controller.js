@@ -37,6 +37,8 @@ UserController.prototype.registerAllMethods = function() {
      */
     this.registerGetMethod('/', this.getAllUsers);
 
+    this.registerGetMethod('/search', this.searchUsers);
+
     /**
      * @api {get} /users/id/:userid Get user by ID
      * @apiName getUserById
@@ -188,6 +190,22 @@ UserController.prototype.getAllUsers = function(request, response) {
                 });
             }
         );
+};
+
+UserController.prototype.searchUsers = function(request, response) {
+    var _this = this,
+        params = request.query,
+        offset = params.offset || 0,
+        limit = params.limit || 20,
+        sort = params.sort || 'id';
+    
+    delete params.offset;
+    delete params.limit;
+    delete params.sort;
+
+    
+
+    __getUserBySuccess.call(_this, response, {});
 };
 
 UserController.prototype.getUserById = function(request, response) {
