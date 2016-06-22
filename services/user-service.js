@@ -55,6 +55,28 @@ UserService.prototype.getUserById = function(id) {
     });
 };
 
+UserService.prototype.getUsersByIds = function(ids) {
+    var users = [];
+    return UserDao.getUsersByIds(ids)
+        .then(
+            function onSuccess(data) {
+                users = _.keyBy(data, 'id');
+                return UserDao.getUsersExtraData(ids);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                _.forEach(data, function(value) {
+                    var id = value.userid;
+                    if (users[id]) {
+                        users[id][value.field] = value.value;
+                    }
+                });
+                return users;
+            }
+        );
+};
+
 UserService.prototype.getUserByEmail = function(email) {
     return __getUserByCriteria({
         email: email
@@ -248,7 +270,13 @@ UserService.prototype.updateUserById = function(id, user) {
             function onSuccess(data) {
                 return _this.getUserById(user.id);
             }
-        );;
+        )
+        .then(
+            function onSuccess(data) {
+                EventService.publishEvent(EventService.keys.USER_UPDATE, data);
+                return data;
+            }
+        );
 };
 
 UserService.prototype.deleteUserById = function(id) {

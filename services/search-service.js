@@ -40,7 +40,7 @@ function SearchService() {
     )
     .catch(
         function onError(error) {
-            console.error(error);
+            console.error('Error initializing ElasticSearch', error);
         }
     );
 };
@@ -80,7 +80,7 @@ SearchService.prototype.search = function(type, body) {
     );
 };
 
-SearchService.prototype.putDocument = function(type, body) {
+SearchService.prototype.createDocument = function(type, body) {
     if (!this.client) {
         return __getUnavailablePromise();
     }
@@ -90,15 +90,62 @@ SearchService.prototype.putDocument = function(type, body) {
             type: type,
             body: body
         }
+    );
+};
+
+SearchService.prototype.replaceDocumentByQuery = function(type, query, body) {
+    if (!this.client) {
+        return __getUnavailablePromise();
+    }
+    var _this = this;
+    return this.client.search(
+        {
+            type: type,
+            body: {
+                query: query
+            }
+        }
     )
     .then(
         function onSuccess(data) {
-            console.log(data);
-        },
+            return q.all(
+                _.map(data.hits.hits, function(hit) {
+                    return _this.client.delete(
+                        {
+                            index: apiConfig.get('services.elasticsearch.index'),
+                            type: type,
+                            id: hit._id
+                        }
+                    );
+                })
+            )
+            .then(
+                function onSuccess(data) {
+                    return _this.createDocument(type, body);
+                }
+            );
+        }
+    )
+    .catch(
         function onError(error) {
             console.error(error);
         }
     );
+    // return this.client.delete(
+    //     {
+    //         index: apiConfig.get('services.elasticsearch.index'),
+    //         type: type,
+    //         id: id
+    //     }
+    // )
+    // .then(
+    //     function onSuccess(data) {
+    //         console.log(data);
+    //     },
+    //     function onError(error) {
+    //         console.error(error);
+    //     }
+    // );;
 };
 
 module.exports = new SearchService();

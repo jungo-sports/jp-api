@@ -61,4 +61,8 @@ FollowService.prototype.removeFollower = function(userId, followerId) {
     return deferred.promise;
 };
 
+FollowService.prototype.getFollowers = function(userId, offset, limit) {
+    return FollowDao.getFollowersForUserId(userId, offset, limit);
+};
+
 module.exports = new FollowService();

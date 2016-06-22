@@ -20,5 +20,8 @@ module.exports = {
     },
     models: {
         user: require('./models/user-model')
+    },
+    persistence: {
+        base: require('./persistence/base/base-dao')
     }
 };

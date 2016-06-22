@@ -43,6 +43,15 @@ UserDao.prototype.getUserByCriteria = function(criteria) {
     return deferred.promise;
 };
 
+UserDao.prototype.getUsersByIds = function(ids) {
+    return this.executeReadQuery(
+        'SELECT * FROM users WHERE id IN (?)',
+        [
+            ids.join(',')
+        ]
+    );
+};
+
 UserDao.prototype.getAllUsers = function(offset, limit, options) {
     var _this = this,
         limitQuery = databaseUtils.getLimitForQuery(offset, limit),
@@ -76,16 +85,33 @@ UserDao.prototype.getUserExtraData = function(userId) {
     );
 };
 
+UserDao.prototype.getUsersExtraData = function(userIds) {
+    return this.executeReadQuery(
+        'SELECT * FROM users_extra_data WHERE userid IN (?)',
+        [
+            userIds.join(',')
+        ]
+    );
+};
+
 UserDao.prototype.updateUser = function(user) {
+    var params = {};
+    if (user.username) {
+        params.username = user.username;
+    }
+    if (user.slug) {
+        params.slug = user.slug;
+    }
+    if (user.email) {
+        params.email = user.email;
+    }
+    if (user.role) {
+        params.role = user.role;
+    }
     return this.executeWriteQuery(
         'UPDATE users SET ? WHERE id = ?',
         [
-            {
-                username: user.username,
-                slug: user.slug,
-                email: user.email,
-                role: user.role
-            },
+            params,
             user.id
         ]
     );

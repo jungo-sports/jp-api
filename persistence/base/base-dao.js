@@ -20,19 +20,19 @@ function BaseDao() {
             mysqlReadWriteCredentials.password,
             mysqlReadWriteCredentials.database
         );
-        __executeStartupScripts();
+        this.executeScript(path.resolve(__dirname, 'resources', 'init.sql'));
     }
 };
 
-function __executeStartupScripts() {
-    MySqlConnector.executeWriteScript(path.resolve(__dirname, 'resources', 'init.sql'))
+BaseDao.prototype.executeScript = function(scriptPath) {
+    MySqlConnector.executeWriteScript(scriptPath)
         .then(
             function onStartupExecuteSuccess(data) {},
             function onStartupExecuteError(error) {
-                console.error('\nError executing startup script for UserDao...', error);
+                console.error('\nError executing script at path', scriptPath, error);
             }
         );
-}
+};
 
 BaseDao.prototype.executeReadQuery = function(query, values) {
     return MySqlConnector.executeReadQuery(query, values);

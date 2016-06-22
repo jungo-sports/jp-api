@@ -45,6 +45,16 @@ FollowDao.prototype.getFollower = function(userId, followerId) {
     );
 };
 
+FollowDao.prototype.getFollowersForUserId = function(userId, offset, limit) {
+    var limitQuery = databaseUtils.getLimitForQuery(offset, limit);
+    return this.executeReadQuery(
+        'SELECT * FROM followers WHERE userid = ? LIMIT ' + limitQuery,
+        [
+            userId
+        ]
+    );
+};
+
 FollowDao.prototype.addFollower = function(userId, followerId) {
     var deferred = q.defer();
     this.executeWriteQuery(
