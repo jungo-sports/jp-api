@@ -131,21 +131,6 @@ SearchService.prototype.replaceDocumentByQuery = function(type, query, body) {
             console.error(error);
         }
     );
-    // return this.client.delete(
-    //     {
-    //         index: apiConfig.get('services.elasticsearch.index'),
-    //         type: type,
-    //         id: id
-    //     }
-    // )
-    // .then(
-    //     function onSuccess(data) {
-    //         console.log(data);
-    //     },
-    //     function onError(error) {
-    //         console.error(error);
-    //     }
-    // );;
 };
 
 module.exports = new SearchService();
