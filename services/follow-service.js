@@ -1,6 +1,7 @@
 var q = require('q'),
     FollowDao = require('../persistence/follow/follow-dao'),
     Follow = require('../models/follow-model'),
+    FollowList = require('../models/follow-list-model'),
     EventService = require('./event-service');
 
 function FollowService() {};
@@ -62,7 +63,19 @@ FollowService.prototype.removeFollower = function(userId, followerId) {
 };
 
 FollowService.prototype.getFollowers = function(userId, offset, limit) {
-    return FollowDao.getFollowersForUserId(userId, offset, limit);
+    var followers = [];
+    return FollowDao.getFollowersForUserId(userId, offset, limit)
+        .then(
+            function onGetFollowersSuccess(data) {
+                followers = data;
+                return FollowDao.getTotalFollowersForUserId(userId);
+            }
+        )
+        .then(
+            function onGetTotalFollowersSuccess(data) {
+                return new FollowList(followers, data);
+            }
+        );
 };
 
 module.exports = new FollowService();

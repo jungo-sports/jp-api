@@ -9,7 +9,7 @@ function UserDao() {
 
 util.inherits(UserDao, BaseDao);
 
-UserDao.prototype.getTotalUsers = function(options) {
+UserDao.prototype.getTotalUsers = function() {
     return this.executeReadQuery(
         'SELECT COUNT(id) AS total FROM users'
     )
@@ -59,20 +59,6 @@ UserDao.prototype.getAllUsers = function(offset, limit, options) {
         users = [];
     return this.executeReadQuery(
         'SELECT * FROM users ORDER BY ' + sortQuery + ' LIMIT ' + limitQuery
-    )
-    .then(
-        function onSuccess(data) {
-            users = data;
-            return _this.getTotalUsers(options);
-        }
-    )
-    .then(
-        function onSuccess(data) {
-            return {
-                users: users,
-                total: data
-            }
-        }
     );
 };
 
@@ -87,10 +73,7 @@ UserDao.prototype.getUserExtraData = function(userId) {
 
 UserDao.prototype.getUsersExtraData = function(userIds) {
     return this.executeReadQuery(
-        'SELECT * FROM users_extra_data WHERE userid IN (?)',
-        [
-            userIds.join(',')
-        ]
+        'SELECT * FROM users_extra_data WHERE userid IN (' + userIds.join(',') + ')'
     );
 };
 
@@ -155,6 +138,9 @@ UserDao.prototype.createUser = function(user) {
 };
 
 UserDao.prototype.createUserExtraData = function(userId, field, value) {
+    if ((value instanceof Array)) {
+        value = value.join(',');
+    }
     return this.executeWriteQuery(
         'INSERT INTO users_extra_data SET ? ON DUPLICATE KEY UPDATE `field` = VALUES(`field`), `value` = VALUES(`value`)',
         {

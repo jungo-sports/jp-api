@@ -5,6 +5,7 @@ var _ = require('lodash'),
     SessionDao = require('../persistence/user/session-dao'),
     AuthenticationDao = require('../persistence/user/authentication-dao'),
     User = require('../models/user-model'),
+    UserList = require('../models/user-list-model'),
     NotFoundError = require('../models/errors/not-found-error'),
     stringUtils = require('../utils/string-utils'),
     dateUtils = require('../utils/date-utils'),
@@ -40,9 +41,37 @@ function __getUserByCriteria(criteria) {
 
 UserService.prototype.getAllUsers = function(offset, limit, options) {
     options = (options instanceof Object) ? options : {};
+    var users = [];
     return UserDao.getAllUsers(offset, limit, {
-        sort: options.sort || '-id'
-    });
+                sort: options.sort || '-id'
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                var ids = _.map(data, 'id');
+                users = _.keyBy(data, 'id');
+                return UserDao.getUsersExtraData(ids);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                _.forEach(data, function(value) {
+                    var id = value.userid;
+                    if (users[id]) {
+                        users[id][value.field] = value.value;
+                    }
+                });
+                users = _.map(users, function(value) {
+                    return value;
+                });
+                return UserDao.getTotalUsers();
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                return new UserList(users, data);
+            }
+        );
 };
 
 UserService.prototype.searchUsers = function(parameters, offset, limit, sort) {

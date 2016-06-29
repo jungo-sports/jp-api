@@ -3,7 +3,8 @@ var _ = require('lodash'),
     util = require('util'),
     BaseController = require('./base-controller'),
     FollowService = require('../services/follow-service'),
-    UserService = require('../services/user-service');
+    UserService = require('../services/user-service'),
+    Follow = require('../models/follow-model');
 
 function FollowController(app) {
     if (!(this instanceof FollowController)) {
@@ -31,16 +32,19 @@ function __populateUsersForFollowers(followers) {
         userIds = [];
 
     userIds = _.uniq(
-        _.map(followers, _.property('userid'))
-        .concat(_.map(followers, _.property('followerid')))
+        _.map(followers.follows, _.property('userid'))
+        .concat(_.map(followers.follows, _.property('followerid')))
     );
 
     UserService.getUsersByIds(userIds)
         .then(
             function onSuccess(data) {
-                _.forEach(followers, function(follower) {
+                followers.follows = _.map(followers.follows, function(follower) {
                     follower.user = data[follower.userid];
                     follower.follower = data[follower.followerid];
+                    delete follower.userid;
+                    delete follower.followerid;
+                    return new Follow(follower);
                 });
                 deferred.resolve(followers);
             },
@@ -61,7 +65,7 @@ FollowController.prototype.getFollowers = function(request, response) {
     FollowService.getFollowers(userId, offset, limit)
         .then(
             function onSuccess(data) {
-                if (data && data.length > 0) {
+                if (data && data.follows && data.follows.length > 0) {
                     __populateUsersForFollowers(data)
                         .then(
                             function onSuccess(data) {

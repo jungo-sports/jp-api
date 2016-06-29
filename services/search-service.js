@@ -68,14 +68,23 @@ function __getUnavailablePromise() {
     return deferred.promise;
 };
 
-SearchService.prototype.search = function(type, body) {
+SearchService.prototype.search = function(type, body, options) {
     if (!this.client) {
         return __getUnavailablePromise();
     }
+    var _this = this;
     return this.client.search(
         {
             type: type,
             body: body
+        }
+    )
+    .then(
+        function onSuccess(data) {
+            if (options && options.parsed) {
+                return _this.getParsedResults(data);
+            }
+            return data;
         }
     );
 };
@@ -131,6 +140,15 @@ SearchService.prototype.replaceDocumentByQuery = function(type, query, body) {
             console.error(error);
         }
     );
+};
+
+SearchService.prototype.getParsedResults = function(results) {
+    if (!results || !results.hits || !results.hits.hits) {
+        return [];
+    }
+    return _.map(results.hits.hits, function(hit) {
+        return hit._source;
+    });
 };
 
 module.exports = new SearchService();

@@ -55,6 +55,24 @@ FollowDao.prototype.getFollowersForUserId = function(userId, offset, limit) {
     );
 };
 
+FollowDao.prototype.getTotalFollowersForUserId = function(userId) {
+    return this.executeReadQuery(
+        'SELECT COUNT(*) AS total FROM followers WHERE userid = ?',
+        [
+            userId
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            data = (data instanceof Array) ? data : [];
+            if (data.length > 0) {
+                data = data[0];
+            }
+            return data.total || 0;
+        }
+    );;
+};
+
 FollowDao.prototype.addFollower = function(userId, followerId) {
     var deferred = q.defer();
     this.executeWriteQuery(
