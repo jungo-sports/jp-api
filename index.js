@@ -9,7 +9,8 @@ module.exports = {
         healthcheck: require('./controllers/health-check-controller'),
         follow: require('./controllers/follow-controller'),
         notification: require('./controllers/notification-controller'),
-        feed: require('./controllers/feed-controller')
+        feed: require('./controllers/feed-controller'),
+        checkin: require('./controllers/checkin-controller')
     },
     services: {
         user: require('./services/user-service'),
