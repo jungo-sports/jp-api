@@ -23,8 +23,8 @@ NotificationController.prototype.registerAllMethods = function() {
 NotificationController.prototype.getNotificationsByUserId = function(request, response) {
     var _this = this,
         userId = request.params.userid,
-        offset = request.query.offset || 0,
-        limit = request.query.limit || 20;
+        offset = parseInt(request.query.offset || 0),
+        limit = parseInt(request.query.limit || 20);
     NotificationService.getNotificationsByUserId(userId, offset, limit)
         .then(
             function onSuccess(data) {
@@ -55,6 +55,15 @@ NotificationController.prototype.registerEventListeners = function() {
         EventService.removeEvent(
             new NotificationEvent({
                 type: EventTypes.types.FOLLOW_ADD,
+                entity: data.id
+            })
+        );
+    });
+
+    EventService.subscribeToEvent(EventService.keys.CHECKIN_ADD, function onCheckinAdd(data) {
+        EventService.addEvent(
+            new NotificationEvent({
+                type: EventTypes.types.CHECKIN_ADD,
                 entity: data.id
             })
         );

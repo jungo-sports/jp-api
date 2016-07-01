@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 CREATE TABLE IF NOT EXISTS `checkins` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `userid` int(11) unsigned NOT NULL,
+  `type` varchar(255) NOT NULL DEFAULT '',
   `longitude` decimal(9,6) DEFAULT NULL,
   `latitude` decimal(9,6) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,

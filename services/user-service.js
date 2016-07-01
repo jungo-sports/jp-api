@@ -1,6 +1,7 @@
 var _ = require('lodash'),
     q = require('q'),
     slug = require('slug'),
+    apiConfig = require('../utils/api-config'),
     UserDao = require('../persistence/user/user-dao'),
     SessionDao = require('../persistence/user/session-dao'),
     AuthenticationDao = require('../persistence/user/authentication-dao'),
@@ -10,7 +11,8 @@ var _ = require('lodash'),
     stringUtils = require('../utils/string-utils'),
     dateUtils = require('../utils/date-utils'),
     SearchService = require('./search-service'),
-    EventService = require('./event-service');
+    EventService = require('./event-service'),
+    MediaService = require('./media-service');
 
 function UserService() {};
 
@@ -32,8 +34,17 @@ function __getUserByCriteria(criteria) {
                     return user;
                 }
                 _.forEach(data, function(value) {
-                    user[value.field] = value.value;
+                    if (value.field === 'avatar') {
+                        user[value.field] = apiConfig.get('paths.images') + value.value;
+                    } else {
+                        user[value.field] = value.value;
+                    }
                 });
+                if (!user.avatar) {
+                    
+                    // Pull from config?
+                    user.avatar = 'http://www.gravatar.com/avatar?d=mm&s=100';
+                }
                 return user;
             }
         );
@@ -170,12 +181,29 @@ UserService.prototype.createUser = function(user) {
         return deferred.promise;
     }
     user.slug = slug(user.username);
+
     return UserDao.createUser(user)
         .then(
             function onSuccess(data) {
                 if (data && data.id) {
                     user.id = data.id;
                     return AuthenticationDao.createUserAuthentication(data.id, user.password);
+                }
+                return data;
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                if (user.avatar) {
+                    return MediaService.uploadImage(user.avatar, 'user-avatar/' + user.id)
+                        .then(
+                            function onSuccess(data) {
+                                if (data && data.key) {
+                                    user.extra = user.extra || {};
+                                    user.extra.avatar = data.key + '?v=' + (new Date().getTime());
+                                }
+                            }
+                        );
                 }
                 return data;
             }
@@ -284,6 +312,22 @@ UserService.prototype.updateUserById = function(id, user) {
     user.id = id;
     user = new User(user);
     return UserDao.updateUser(user)
+        .then(
+            function onSuccess(data) {
+                if (user.avatar) {
+                    return MediaService.uploadImage(user.avatar, 'user-avatar/' + user.id)
+                        .then(
+                            function onSuccess(data) {
+                                if (data && data.key) {
+                                    user.extra = user.extra || {};
+                                    user.extra.avatar = data.key + '?v=' + (new Date().getTime());
+                                }
+                            }
+                        );
+                }
+                return data;
+            }
+        )
         .then(
             function onSuccess(data) {
                 var extraData = [];

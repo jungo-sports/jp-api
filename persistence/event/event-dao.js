@@ -29,10 +29,7 @@ EventDao.prototype.getEventById = function(id) {
 
 EventDao.prototype.getEventsByIds = function(ids) {
     return this.executeReadQuery(
-        'SELECT * FROM events WHERE id IN (?)',
-        [
-            ids.join(',')
-        ]
+        'SELECT * FROM events WHERE id IN (' + ids.join(',') + ')'
     );
 };
 

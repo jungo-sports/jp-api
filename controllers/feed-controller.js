@@ -20,8 +20,8 @@ FeedController.prototype.registerAllMethods = function() {
 FeedController.prototype.getFeedByUserId = function(request, response) {
     var _this = this,
         userId = request.params.userid,
-        offset = request.query.offset || 0,
-        limit = request.query.limit || 20;
+        offset = parseInt(request.query.offset || 0),
+        limit = parseInt(request.query.limit || 20);
     FeedService.getFeedByUserId(userId, offset, limit)
         .then(
             function onSuccess(data) {

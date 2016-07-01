@@ -129,6 +129,13 @@ EventService.prototype.getEventsByIds = function(ids) {
                     })
                 );
             }
+        )
+        .then(
+            function onSuccess(data) {
+                return _.sortBy(data, function(event) {
+                    return event.event.createddate;
+                }).reverse();
+            }
         );
 };
 

@@ -2,7 +2,8 @@ var EventTypes = require('./event-types-model');
 
 var distributionMap = {
     feed: [
-        EventTypes.types.FOLLOW_ADD
+        EventTypes.types.FOLLOW_ADD,
+        EventTypes.types.CHECKIN_ADD
     ],
     notifications: [
         EventTypes.types.FOLLOW_ADD

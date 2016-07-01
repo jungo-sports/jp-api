@@ -5,6 +5,7 @@ function User(data) {
 
     var user = _({
         id: data.id,
+        avatar: data.avatar,
         username: data.username,
         slug: data.slug,
         email: data.email,

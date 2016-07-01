@@ -10,6 +10,9 @@ EventMap.prototype.getEventForType = function(type) {
         case EventTypes.types.FOLLOW_ADD:
             event = 'follow-add-event';
             break;
+        case EventTypes.types.CHECKIN_ADD:
+            event = 'checkin-add-event';
+            break;
         default:
             break;
     }
