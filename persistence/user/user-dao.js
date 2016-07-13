@@ -45,10 +45,7 @@ UserDao.prototype.getUserByCriteria = function(criteria) {
 
 UserDao.prototype.getUsersByIds = function(ids) {
     return this.executeReadQuery(
-        'SELECT * FROM users WHERE id IN (?)',
-        [
-            ids.join(',')
-        ]
+        'SELECT * FROM users WHERE id IN (' + ids.join(',') + ')'
     );
 };
 

@@ -109,7 +109,17 @@ UserService.prototype.getUsersByIds = function(ids) {
                 _.forEach(data, function(value) {
                     var id = value.userid;
                     if (users[id]) {
-                        users[id][value.field] = value.value;
+
+                        if (value.field === 'avatar') {
+                            users[id][value.field] = apiConfig.get('paths.images') + value.value;
+                        } else {
+                            users[id][value.field] = value.value;
+                        }
+                        if (!users[id].avatar) {
+                    
+                            // Pull from config?
+                            users[id].avatar = 'http://www.gravatar.com/avatar?d=mm&s=100';
+                        }
                     }
                 });
                 return users;

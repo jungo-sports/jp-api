@@ -119,3 +119,17 @@ CREATE TABLE IF NOT EXISTS `checkins` (
   KEY `userid` (`userid`),
   CONSTRAINT `checkins_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `friends` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(11) unsigned NOT NULL,
+  `friendid` int(11) unsigned NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT '',
+  `requesteddate` datetime NOT NULL,
+  `accepteddate` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`),
+  KEY `friendid` (`friendid`),
+  CONSTRAINT `friends_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`),
+  CONSTRAINT `friends_ibfk_2` FOREIGN KEY (`friendid`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

@@ -45,6 +45,16 @@ FollowDao.prototype.getFollower = function(userId, followerId) {
     );
 };
 
+FollowDao.prototype.getFollowers = function(userId, followerIds) {
+    var ids = followerIds.join(',');
+    return this.executeReadQuery(
+        'SELECT * FROM followers WHERE userid = ? AND followerid IN (' + ids + ')',
+        [
+            userId
+        ]
+    );
+};
+
 FollowDao.prototype.getFollowersForUserId = function(userId, offset, limit) {
     var limitQuery = databaseUtils.getLimitForQuery(offset, limit);
     return this.executeReadQuery(

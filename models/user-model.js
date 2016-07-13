@@ -1,6 +1,7 @@
 var _ = require('lodash');
 
 function User(data) {
+
     data = (data instanceof Object) ? data : {};
 
     var user = _({
@@ -15,7 +16,7 @@ function User(data) {
     }).omitBy(_.isUndefined).value();
 
     _.forOwn(data, function(value, key) {
-        if (!user[key] && !user.extra[key]) {
+        if (user[key] === undefined && user.extra[key] === undefined) {
             user.extra[key] = value;
         }
     });

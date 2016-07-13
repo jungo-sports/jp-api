@@ -10,14 +10,16 @@ module.exports = {
         follow: require('./controllers/follow-controller'),
         notification: require('./controllers/notification-controller'),
         feed: require('./controllers/feed-controller'),
-        checkin: require('./controllers/checkin-controller')
+        checkin: require('./controllers/checkin-controller'),
+        friend: require('./controllers/friend-controller')
     },
     services: {
         user: require('./services/user-service'),
         rating: require('./services/rating-service'),
         follow: require('./services/follow-service'),
         event: require('./services/event-service'),
-        search: require('./services/search-service')
+        search: require('./services/search-service'),
+        friend: require('./services/friend-service')
     },
     models: {
         user: require('./models/user-model')

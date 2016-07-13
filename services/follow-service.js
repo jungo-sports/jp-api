@@ -1,4 +1,5 @@
-var q = require('q'),
+var _ = require('lodash'),
+    q = require('q'),
     FollowDao = require('../persistence/follow/follow-dao'),
     Follow = require('../models/follow-model'),
     FollowList = require('../models/follow-list-model'),
@@ -23,6 +24,22 @@ FollowService.prototype.getIsUserFollowing = function(userId, followerId) {
         .catch(
             function onError(error) {
                 return false;
+            }
+        );
+};
+
+FollowService.prototype.getIsUserFollowingList = function(userId, followerIds) {
+    return FollowDao.getFollowers(userId, followerIds)
+        .then(
+            function onSuccess(data) {
+                var followers = {};
+                _.forEach(followerIds, function(followerId) {
+                    var follower = _.find(data, function(user) {
+                        return (user.followerid === followerId);
+                    });
+                    followers[followerId] = (follower !== undefined);
+                });
+                return followers;
             }
         );
 };
