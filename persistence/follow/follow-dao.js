@@ -80,7 +80,35 @@ FollowDao.prototype.getTotalFollowersForUserId = function(userId) {
             }
             return data.total || 0;
         }
-    );;
+    );
+};
+
+FollowDao.prototype.getFollowingForUserId = function(userId, offset, limit) {
+    var limitQuery = databaseUtils.getLimitForQuery(offset, limit);
+    return this.executeReadQuery(
+        'SELECT * FROM followers WHERE followerid = ? LIMIT ' + limitQuery,
+        [
+            userId
+        ]
+    );
+};
+
+FollowDao.prototype.getTotalFollowingForUserId = function(userId) {
+    return this.executeReadQuery(
+        'SELECT COUNT(*) AS total FROM followers WHERE followerid = ?',
+        [
+            userId
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            data = (data instanceof Array) ? data : [];
+            if (data.length > 0) {
+                data = data[0];
+            }
+            return data.total || 0;
+        }
+    );
 };
 
 FollowDao.prototype.addFollower = function(userId, followerId) {

@@ -95,4 +95,20 @@ FollowService.prototype.getFollowers = function(userId, offset, limit) {
         );
 };
 
+FollowService.prototype.getFollowing = function(userId, offset, limit) {
+    var followers = [];
+    return FollowDao.getFollowingForUserId(userId, offset, limit)
+        .then(
+            function onGetFollowersSuccess(data) {
+                followers = data;
+                return FollowDao.getTotalFollowingForUserId(userId);
+            }
+        )
+        .then(
+            function onGetTotalFollowersSuccess(data) {
+                return new FollowList(followers, data);
+            }
+        );
+};
+
 module.exports = new FollowService();
