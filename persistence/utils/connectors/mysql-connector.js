@@ -15,7 +15,7 @@ function __executeQuery(pool, query, values) {
                 '\nError connecting to pool while running query...\n' + query + '\nError: ' + JSON.stringify(error)
             );
         }
-        // console.log(mysql.format(query, values));
+        console.log(mysql.format(query, values));
         connection.query(query, values || [], function (error, rows) {
             connection.release();
             if (error) {

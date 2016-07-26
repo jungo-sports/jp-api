@@ -4,7 +4,8 @@ var util = require('util'),
     User = require('../models/user-model'),
     UserList = require('../models/user-list-model'),
     SessionToken = require('../models/session-token-model'),
-    NotFoundError = require('../models/errors/not-found-error');
+    NotFoundError = require('../models/errors/not-found-error'),
+    DuplicateEntryError = require('../models/errors/duplicate-entry-error');
 
 function UserController(app) {
     if (!(this instanceof UserController)) {
@@ -203,8 +204,6 @@ UserController.prototype.searchUsers = function(request, response) {
     delete params.limit;
     delete params.sort;
 
-    
-
     __getUserBySuccess.call(_this, response, {});
 };
 
@@ -283,7 +282,13 @@ UserController.prototype.createUser = function(request, response) {
                 _this.sendCreatedSuccess(response, data);
             },
             function onError(error) {
-                if (error && (error instanceof Error)) {
+                if (error && (error instanceof DuplicateEntryError)) {
+                    _this.sendBadRequestError(response, {
+                        created: false,
+                        error: 'Duplicate entry'
+                    });
+                    return;
+                } else if (error && (error instanceof Error)) {
                     error = error.message;
                 }
                 _this.sendServerError(response, {

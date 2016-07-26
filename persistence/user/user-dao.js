@@ -1,7 +1,8 @@
 var util = require('util'),
     q = require('q'),
     BaseDao = require('../base/base-dao'),
-    databaseUtils = require('../utils/database-utils');
+    databaseUtils = require('../utils/database-utils'),
+    DuplicateEntryError = require('../../models/errors/duplicate-entry-error');
 
 function UserDao() {
     BaseDao.call(this);
@@ -122,13 +123,12 @@ UserDao.prototype.createUser = function(user) {
             error = (error instanceof Object) ? error : {};
             switch(error.code) {
                 case 'ER_BAD_NULL_ERROR':
-                    message += ' (invalid values specified)';
+                    deferred.reject(message + ' (invalid values specified)');
                     break;
                 case 'ER_DUP_ENTRY':
-                    message += ' (duplicate entry)';
+                    deferred.reject(new DuplicateEntryError(message + ' (duplicate entry)'));
                     break;
             }
-            deferred.reject(message);
         }
     );
     return deferred.promise;

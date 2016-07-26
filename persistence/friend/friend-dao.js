@@ -162,12 +162,40 @@ Dao.prototype.acceptFriendRequest = function(userId, friendId) {
 Dao.prototype.declineFriendRequest = function(userId, friendId) {
     return this.executeWriteQuery(
         'UPDATE friends SET ? WHERE userid = ? AND friendid = ?',
-        {
-            status: 'declined',
-            accepteddate: dateUtils.getUTCDate().toDate()
-        }.
-        userId,
-        friendId
+        [
+            {
+                status: 'declined'
+            },
+            userId,
+            friendId
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            return {
+                removed: (data && data.affectedRows) ? true : false
+            }
+        }
+    );
+};
+
+Dao.prototype.getFriendRequest = function(userId, friendId) {
+    return this.executeReadQuery(
+        'SELECT * FROM friends WHERE (userid = ? AND friendid = ?) OR (userid = ? AND friendid = ?) ORDER BY id DESC',
+        [
+            userId,
+            friendId,
+            friendId,
+            userId
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            if (!data || data.length === 0) {
+                return {};
+            }
+            return data[0];
+        }
     );
 };
 

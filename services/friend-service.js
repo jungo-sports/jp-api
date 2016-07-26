@@ -2,12 +2,29 @@ var _ = require('lodash'),
     q = require('q'),
     FriendList = require('../models/friend-list-model'),
     FriendDao = require('../persistence/friend/friend-dao'),
-    UserService = require('./user-service');
+    UserService = require('./user-service'),
+    EventService = require('./event-service');
 
 function FriendService() {};
 
+FriendService.prototype.addFriendRequest = function(userId, friendId) {
+    return FriendDao.addFriendRequest(userId, friendId);
+};
+
+FriendService.prototype.acceptFriendRequest = function(userId, friendId) {
+    return FriendDao.acceptFriendRequest(userId, friendId);
+};
+
+FriendService.prototype.declineFriendRequest = function(userId, friendId) {
+    return FriendDao.declineFriendRequest(userId, friendId);
+};
+
 FriendService.prototype.getIsUserFriend = function(userId, friendId) {
     return FriendDao.isFriend(userId, friendId);
+};
+
+FriendService.prototype.getFriendRequest = function(userId, friendId) {
+    return FriendDao.getFriendRequest(userId, friendId);
 };
 
 FriendService.prototype.getIsUserFriendsList = function(userId, friendIds) {
