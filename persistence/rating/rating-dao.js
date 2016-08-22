@@ -60,12 +60,13 @@ RatingDao.prototype.getAverageRating = function(entity, type) {
 RatingDao.prototype.addRating = function(rating) {
     var deferred = q.defer();
     this.executeWriteQuery(
-        'INSERT INTO ratings SET ? ON DUPLICATE KEY UPDATE `rating` = VALUES(`rating`)',
+        'INSERT INTO ratings SET ? ON DUPLICATE KEY UPDATE `rating` = VALUES(`rating`), `comment` = VALUES(`comment`)',
         {
             userid: rating.userid,
             entity: rating.entity,
             type: rating.type,
-            rating: rating.rating
+            rating: rating.rating,
+            comment: rating.comment
         }
     )
     .then(
@@ -105,6 +106,36 @@ RatingDao.prototype.addAggregateRating = function(entity, type, rating, total) {
             type: type,
             rating: rating,
             total: total
+        }
+    );
+};
+
+RatingDao.prototype.getRatings = function(entity, type, offset, limit) {
+    var limitQuery = databaseUtils.getLimitForQuery(offset, limit);
+    return this.executeReadQuery(
+        'SELECT * FROM ratings WHERE entity = ? AND type = ? ORDER BY id ASC LIMIT ' + limitQuery,
+        [
+            entity,
+            type
+        ]
+    );
+};
+
+RatingDao.prototype.getTotalRatings = function(entity, type) {
+    return this.executeReadQuery(
+        'SELECT COUNT(*) AS total FROM ratings WHERE entity = ? AND type = ?',
+        [
+            entity,
+            type
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            data = (data instanceof Array) ? data : [];
+            if (data.length > 0) {
+                data = data[0];
+            }
+            return data.total || 0;
         }
     );
 };

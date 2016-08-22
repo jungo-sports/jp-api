@@ -10,7 +10,9 @@ function Model(data) {
         latitude: data.latitude,
         name: data.name,
         description: data.description,
-        date: data.date,
+        startdate: data.startdate,
+        enddate: data.enddate,
+        extra: data.extra,
         user: data.user
     }).omitBy(_.isUndefined).value();
 }

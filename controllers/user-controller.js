@@ -1,4 +1,5 @@
-var util = require('util'),
+var _ = require('lodash'),
+    util = require('util'),
     BaseController = require('./base-controller'),
     UserService = require('../services/user-service'),
     User = require('../models/user-model'),
@@ -37,6 +38,8 @@ UserController.prototype.registerAllMethods = function() {
      * @apiSuccess {Number} response.total Total number of users
      */
     this.registerGetMethod('/', this.getAllUsers);
+
+    this.registerGetMethod('/ids/:userids', this.getUsersByIds);
 
     this.registerGetMethod('/search', this.searchUsers);
 
@@ -184,6 +187,23 @@ UserController.prototype.getAllUsers = function(request, response) {
                 data.users = (data.users instanceof Array) ? data.users : [];
                 data.total = data.total || 0;
                 _this.sendSuccess(response, new UserList(data.users, data.total));
+            },
+            function onError(error) {
+                _this.sendServerError(response, {
+                    error: error || 'Error getting users'
+                });
+            }
+        );
+};
+
+UserController.prototype.getUsersByIds = function(request, response) {
+    var _this = this,
+        userIds = request.params.userids.split(',');
+    UserService.getUsersByIds(userIds)
+        .then(
+            function onSuccess(data) {
+                var users = _.values(data);
+                _this.sendSuccess(response, new UserList(users, users.length));
             },
             function onError(error) {
                 _this.sendServerError(response, {

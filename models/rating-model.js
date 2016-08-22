@@ -7,7 +7,8 @@ function Rating(data) {
         userid: data.userid,
         entity: data.entity,
         type: data.type,
-        rating: data.rating
+        rating: data.rating,
+        comment: data.comment
     }).omitBy(_.isUndefined).value(); // Only 'undefined' values removed, 'null' is valid
 }
 

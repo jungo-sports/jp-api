@@ -2,14 +2,19 @@ var _ = require('lodash'),
     q = require('q'),
     NotificationDao = require('../persistence/notification/notification-dao'),
     EventService = require('./event-service'),
-    NotificationListModel = require('../models/notification-list-model');
+    NotificationListModel = require('../models/notification-list-model'),
+    EventTypes = require('../models/event-types-model');
 
 function NotificationService() {};
 
-NotificationService.prototype.getNotificationsByUserId = function(userId, offset, limit) {
+NotificationService.prototype.getNotificationsByUserId = function(userId, offset, limit, types) {
     var events = [],
         notifications = [];
-    return NotificationDao.getNotifications(userId, offset, limit)
+
+    if (!types) {
+        types = _.values(EventTypes.types);
+    }
+    return NotificationDao.getNotifications(userId, offset, limit, types)
         .then(
             function onSuccess(data) {
                 if (!data || data.length === 0) {
@@ -24,8 +29,8 @@ NotificationService.prototype.getNotificationsByUserId = function(userId, offset
                 events = data;
                 return q.all(
                     [
-                        NotificationDao.getTotalNotifications(userId),
-                        NotificationDao.getTotalUnreadNotifications(userId)
+                        NotificationDao.getTotalNotifications(userId, types),
+                        NotificationDao.getTotalUnreadNotifications(userId, types)
                     ]
                 );
             }

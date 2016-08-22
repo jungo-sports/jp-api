@@ -24,8 +24,9 @@ NotificationController.prototype.getNotificationsByUserId = function(request, re
     var _this = this,
         userId = request.params.userid,
         offset = parseInt(request.query.offset || 0),
-        limit = parseInt(request.query.limit || 20);
-    NotificationService.getNotificationsByUserId(userId, offset, limit)
+        limit = parseInt(request.query.limit || 20),
+        types = (request.query.types) ? request.query.types.split(',') : undefined;
+    NotificationService.getNotificationsByUserId(userId, offset, limit, types)
         .then(
             function onSuccess(data) {
                 _this.sendSuccess(response, data);
@@ -64,6 +65,48 @@ NotificationController.prototype.registerEventListeners = function() {
         EventService.addEvent(
             new NotificationEvent({
                 type: EventTypes.types.CHECKIN_ADD,
+                entity: data.id
+            })
+        );
+    });
+
+    EventService.subscribeToEvent(EventService.keys.FRIEND_REQUEST, function onFriendAdd(data) {
+        EventService.addEvent(
+            new NotificationEvent({
+                type: EventTypes.types.FRIEND_REQUEST,
+                entity: data.id
+            })
+        );
+    });
+
+    EventService.subscribeToEvent(EventService.keys.FRIEND_REMOVE, function onFriendRemove(data) {
+        EventService.removeEvent(
+            new NotificationEvent({
+                type: EventTypes.types.FRIEND_REQUEST,
+                entity: data.id
+            })
+        );
+        EventService.removeEvent(
+            new NotificationEvent({
+                type: EventTypes.types.FRIEND_APPROVE,
+                entity: data.id
+            })
+        );
+    });
+
+    EventService.subscribeToEvent(EventService.keys.FRIEND_APPROVE, function onFriendAdd(data) {
+        EventService.removeEvent(
+            new NotificationEvent({
+                type: EventTypes.types.FRIEND_REQUEST,
+                entity: data.id
+            })
+        );
+    });
+
+    EventService.subscribeToEvent(EventService.keys.POKE_ADD, function onPokeAdd(data) {
+        EventService.addEvent(
+            new NotificationEvent({
+                type: EventTypes.types.POKE_ADD,
                 entity: data.id
             })
         );

@@ -36,21 +36,24 @@ Dao.prototype.addNotificationEvent = function(userId, eventId) {
     return deferred.promise;
 };
 
-Dao.prototype.getNotifications = function(userId, offset, limit) {
+Dao.prototype.getNotifications = function(userId, offset, limit, types) {
     var limitQuery = databaseUtils.getLimitForQuery(offset, limit);
     return this.executeReadQuery(
-        'SELECT * FROM notifications WHERE userid = ? ORDER BY createddate DESC LIMIT ' + limitQuery,
+        // 'SELECT * FROM notifications WHERE userid = ? ORDER BY createddate DESC LIMIT ' + limitQuery,
+        'SELECT n.* FROM notifications AS n, events AS e WHERE n.userid = ? AND n.eventid = e.id AND e.type IN (?) ORDER BY n.createddate DESC LIMIT ' + limitQuery,
         [
-            userId
+            userId,
+            types
         ]
     )
 };
 
-Dao.prototype.getTotalNotifications = function(userId) {
+Dao.prototype.getTotalNotifications = function(userId, types) {
     return this.executeReadQuery(
-        'SELECT COUNT(*) AS total FROM notifications, events WHERE userid = ? AND events.id = notifications.eventid',
+        'SELECT COUNT(*) AS total FROM notifications, events WHERE userid = ? AND events.id = notifications.eventid AND events.type IN (?)',
         [
-            userId
+            userId,
+            types
         ]
     )
     .then(
@@ -64,12 +67,13 @@ Dao.prototype.getTotalNotifications = function(userId) {
     );
 };
 
-Dao.prototype.getTotalUnreadNotifications = function(userId) {
+Dao.prototype.getTotalUnreadNotifications = function(userId, types) {
     return this.executeReadQuery(
-        'SELECT COUNT(*) AS total FROM notifications, events WHERE userid = ? AND UNREAD = ? AND events.id = notifications.eventid',
+        'SELECT COUNT(*) AS total FROM notifications, events WHERE userid = ? AND UNREAD = ? AND events.id = notifications.eventid AND events.type IN (?)',
         [
             userId,
-            true
+            true,
+            types
         ]
     )
     .then(

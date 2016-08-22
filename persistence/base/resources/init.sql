@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `ratings` (
   `entity` varchar(255) NOT NULL DEFAULT '',
   `type` varchar(255) NOT NULL DEFAULT '',
   `rating` decimal(3,1) NOT NULL,
+  `comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `userid_2` (`userid`,`entity`,`type`),
   KEY `userid` (`userid`),
@@ -67,6 +68,7 @@ CREATE TABLE IF NOT EXISTS `followers` (
   `userid` int(11) unsigned NOT NULL,
   `followerid` int(11) unsigned NOT NULL,
   `followdate` datetime NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `userid` (`userid`,`followerid`),
   KEY `followerid` (`followerid`),
@@ -114,7 +116,9 @@ CREATE TABLE IF NOT EXISTS `checkins` (
   `latitude` decimal(9,6) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `date` datetime DEFAULT NULL,
+  `startdate` datetime DEFAULT NULL,
+  `enddate` datetime DEFAULT NULL,
+  `extra` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `userid` (`userid`),
   CONSTRAINT `checkins_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
@@ -132,4 +136,27 @@ CREATE TABLE IF NOT EXISTS `friends` (
   KEY `friendid` (`friendid`),
   CONSTRAINT `friends_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`),
   CONSTRAINT `friends_ibfk_2` FOREIGN KEY (`friendid`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `pokes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(11) unsigned NOT NULL,
+  `pokedid` int(11) unsigned NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userid` (`userid`,`pokedid`),
+  KEY `pokedid` (`pokedid`),
+  CONSTRAINT `pokes_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`),
+  CONSTRAINT `pokes_ibfk_2` FOREIGN KEY (`pokedid`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `likes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(11) unsigned NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `entity` varchar(255) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userid` (`userid`,`type`,`entity`),
+  CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

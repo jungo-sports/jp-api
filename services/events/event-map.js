@@ -13,6 +13,15 @@ EventMap.prototype.getEventForType = function(type) {
         case EventTypes.types.CHECKIN_ADD:
             event = 'checkin-add-event';
             break;
+        case EventTypes.types.FRIEND_REQUEST:
+            event = 'friend-request-event';
+            break;
+        case EventTypes.types.FRIEND_APPROVE:
+            event = 'friend-approve-event';
+            break;
+        case EventTypes.types.POKE_ADD:
+            event = 'poke-add-event';
+            break;
         default:
             break;
     }

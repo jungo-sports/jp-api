@@ -10,6 +10,47 @@ function Dao() {
 
 util.inherits(Dao, BaseDao);
 
+Dao.prototype.getFriendById = function(id) {
+    return this.executeReadQuery(
+        'SELECT * FROM friends WHERE id = ?',
+        [
+            id
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            if (!data || data.length === 0) {
+                return undefined;
+            }
+            return data[0];
+        }
+    );
+};
+
+Dao.prototype.deleteFriendById = function(id) {
+    var deferred = q.defer();
+    this.executeWriteQuery(
+        'DELETE FROM friends WHERE id = ?',
+        [
+            id
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            if (data && data.affectedRows) {
+                return deferred.resolve({
+                    removed: true
+                });
+            }
+            deferred.reject('Unknown error deleting friend');
+        },
+        function onError(error) {
+            deferred.reject('Error deleting friend ' + databaseUtils.getErrorByCode(error.code));
+        }
+    );
+    return deferred.promise;
+};
+
 Dao.prototype.getFriendsByUserId = function(userId, offset, limit) {
     return this.executeReadQuery(
         'SELECT * FROM friends WHERE (userid = ? OR friendid = ?) AND status = \'accepted\' ORDER BY accepteddate DESC LIMIT ?,?',
@@ -73,7 +114,7 @@ Dao.prototype.getTotalPendingFriendsByUserId = function(userId) {
 
 Dao.prototype.isFriend = function(userId, friendId) {
     return this.executeReadQuery(
-        'SELECT * FROM friends WHERE (userid = ? AND friendid = ?) OR (userid = ? AND friendid = ?) AND status = \'accepted\'',
+        'SELECT * FROM friends WHERE ((userid = ? AND friendid = ?) OR (userid = ? AND friendid = ?)) AND status = \'accepted\'',
         [
             userId,
             friendId,
@@ -94,7 +135,7 @@ Dao.prototype.isFriend = function(userId, friendId) {
 Dao.prototype.isFriendList = function(userId, friendIds) {
     var ids = friendIds.join(',');
     return this.executeReadQuery(
-        'SELECT * FROM friends WHERE (userid = ? AND friendid IN (' + ids + ')) OR (userid IN (' + ids + ') AND friendid = ?) AND status = \'accepted\'',
+        'SELECT * FROM friends WHERE ((userid = ? AND friendid IN (' + ids + ')) OR (userid IN (' + ids + ')) AND friendid = ?) AND status = \'accepted\'',
         [
             userId,
             userId
@@ -148,15 +189,32 @@ Dao.prototype.addFriendRequest = function(userId, friendId) {
 };
 
 Dao.prototype.acceptFriendRequest = function(userId, friendId) {
-    return this.executeWriteQuery(
+    var deferred = q.defer();
+    this.executeWriteQuery(
         'UPDATE friends SET ? WHERE userid = ? AND friendid = ?',
-        {
-            status: 'accepted',
-            accepteddate: dateUtils.getUTCDate().toDate()
-        }.
-        userId,
-        friendId
+        [
+            {
+                status: 'accepted',
+                accepteddate: dateUtils.getUTCDate().toDate()
+            },
+            userId,
+            friendId
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            if (data && data.affectedRows) {
+                return deferred.resolve({
+                    accepted: true
+                });
+            }
+            deferred.reject('Unknown error accepting friend');
+        },
+        function onError(error) {
+            deferred.reject('Error accepting friend ' + databaseUtils.getErrorByCode(error.code));
+        }
     );
+    return deferred.promise;
 };
 
 Dao.prototype.declineFriendRequest = function(userId, friendId) {

@@ -27,12 +27,42 @@ Dao.prototype.getCheckinById = function(id) {
     );
 };
 
+Dao.prototype.getCheckinsForUser = function(userId, offset, limit) {
+    return this.executeReadQuery(
+        'SELECT * FROM checkins WHERE userid = ? ORDER BY startdate DESC LIMIT ?, ?',
+        [
+            userId,
+            offset,
+            limit
+        ]
+    )
+};
+
+Dao.prototype.getTotalCheckinsForUser = function(userId) {
+    return this.executeReadQuery(
+        'SELECT COUNT(id) AS total FROM checkins WHERE userid = ?',
+        [
+            userId
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            data = (data instanceof Array) ? data : [];
+            if (data.length > 0) {
+                data = data[0];
+            }
+            return data.total || 0;
+        }
+    );
+};
+
 Dao.prototype.addCheckinEvent = function(userId, type, extra) {
     var deferred = q.defer(),
         parameters = {
             userid: userId,
             type: type
         };
+
     extra = (extra instanceof Object) ? extra : {};
     if (extra.longitude) {
         parameters.longitude = extra.longitude;
@@ -46,10 +76,18 @@ Dao.prototype.addCheckinEvent = function(userId, type, extra) {
     if (extra.description) {
         parameters.description = extra.description;
     }
-    if (extra.date) {
-        parameters.date = extra.date;
+    if (extra.startdate) {
+        parameters.startdate = extra.startdate;
     } else {
-        parameters.date = dateUtils.getUTCDate().toDate()
+        parameters.startdate = dateUtils.getUTCDate().toDate()
+    }
+    if (extra.enddate) {
+        parameters.enddate = extra.enddate;
+    } else {
+        parameters.enddate = dateUtils.getUTCDate().toDate()
+    }
+    if (extra.extra) {
+        parameters.extra = extra.extra;
     }
     this.executeWriteQuery(
         'INSERT INTO checkins SET ?',

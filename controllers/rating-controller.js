@@ -1,7 +1,9 @@
 var _ = require('lodash'),
+    q = require('q'),
     util = require('util'),
     BaseController = require('./base-controller'),
-    RatingService = require('../services/rating-service');
+    RatingService = require('../services/rating-service'),
+    UserService = require('../services/user-service');
 
 function RatingController(app) {
     if (!(this instanceof RatingController)) {
@@ -18,9 +20,33 @@ RatingController.prototype.registerAllMethods = function() {
 
     this.registerGetMethod('/userid/:userid/entity/:entity/type/:types', this.getRatingsByUserId);
 
-    this.registerGetMethod('/entity/:entity/type/:types', this.getAverageRatings);
+    this.registerGetMethod('/entity/:entity/types/:types', this.getAverageRatings);
+
+    this.registerGetMethod('/entity/:entity/type/:type', this.getRatings);
 
     this.registerPostMethod('/', this.createRating);
+};
+
+function __populateUsersForRatings(ratings) {
+    var deferred = q.defer(),
+        userIds = [];
+
+    userIds = _.uniq(_.map(ratings, _.property('userid')));
+
+    UserService.getUsersByIds(userIds)
+        .then(
+            function onSuccess(data) {
+                _.forEach(ratings, function(rating) {
+                    rating.user = data[rating.userid];
+                });
+                deferred.resolve(ratings);
+            },
+            function onError(error) {
+                deferred.resolve(ratings);
+            }
+        );
+
+    return deferred.promise;
 };
 
 RatingController.prototype.getRatingsByUserId = function(request, response) {
@@ -36,6 +62,34 @@ RatingController.prototype.getRatingsByUserId = function(request, response) {
                 }
                 _this.sendServerError(response, {
                     error: error || 'Error getting ratings'
+                });
+            }
+        );
+};
+
+RatingController.prototype.getRatings = function(request, response) {
+    var _this = this,
+        entity = request.params.entity,
+        type = request.params.type,
+        offset = request.query.offset || 0,
+        limit = request.query.limit || 25;
+
+    RatingService.getRatings(entity, type, offset, limit)
+        .then(
+            function onSuccess(data) {
+                __populateUsersForRatings(data.ratings)
+                    .then(
+                        function onSuccess(ratings) {
+                            _this.sendSuccess(response, data);
+                        }
+                    );
+            },
+            function onError(error) {
+                if (error && (error instanceof Error)) {
+                    error = error.message;
+                }
+                _this.sendServerError(response, {
+                    error: error || 'Error getting ratingss'
                 });
             }
         );

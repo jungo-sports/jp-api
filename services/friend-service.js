@@ -1,18 +1,50 @@
 var _ = require('lodash'),
     q = require('q'),
     FriendList = require('../models/friend-list-model'),
+    Friend = require('../models/friend-model'),
     FriendDao = require('../persistence/friend/friend-dao'),
     UserService = require('./user-service'),
     EventService = require('./event-service');
 
 function FriendService() {};
 
+FriendService.prototype.getFriendById = function(id) {
+    return FriendDao.getFriendById(id)
+};
+
 FriendService.prototype.addFriendRequest = function(userId, friendId) {
-    return FriendDao.addFriendRequest(userId, friendId);
+    return FriendDao.addFriendRequest(userId, friendId)
+        .then(
+            function onSuccess(data) {
+                return FriendDao.getFriendById(data.id);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                EventService.publishEvent(EventService.keys.FRIEND_REQUEST, new Friend(data));
+                return data;
+            }
+        );
+};
+
+FriendService.prototype.deleteFriendById = function(id) {
+    return FriendDao.getFriendById(id)
+        .then(
+            function onSuccess(data) {
+                EventService.publishEvent(EventService.keys.FRIEND_REMOVE, new Friend(data));
+                return FriendDao.deleteFriendById(id);
+            }
+        );
 };
 
 FriendService.prototype.acceptFriendRequest = function(userId, friendId) {
-    return FriendDao.acceptFriendRequest(userId, friendId);
+    return FriendDao.getFriendRequest(userId, friendId)
+        .then(
+            function onSuccess(data) {
+                EventService.publishEvent(EventService.keys.FRIEND_APPROVE, new Friend(data));
+                return FriendDao.acceptFriendRequest(userId, friendId);
+            }
+        );
 };
 
 FriendService.prototype.declineFriendRequest = function(userId, friendId) {

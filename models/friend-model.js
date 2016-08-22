@@ -11,7 +11,8 @@ function Model(data) {
         status: data.status,
         requesteddate: data.requesteddate,
         accepteddate: data.accepteddate,
-        friend: new User(data.friend)
+        friend: data.friend,
+        user: data.user
     }).omitBy(_.isUndefined).value();
 
     return friend;

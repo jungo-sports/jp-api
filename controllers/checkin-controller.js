@@ -20,6 +20,8 @@ CheckinController.prototype.registerAllMethods = function() {
 
     this.registerPostMethod('/', this.addCheckin);
 
+    this.registerGetMethod('/user/id/:userid', this.getCheckins);
+
 };
 
 CheckinController.prototype.addCheckin = function(request, response) {
@@ -41,5 +43,27 @@ CheckinController.prototype.addCheckin = function(request, response) {
             }
         );
 };
+
+CheckinController.prototype.getCheckins = function(request, response) {
+    var _this = this,
+        userId = request.params.userid,
+        offset = parseInt(request.query.offset || 0),
+        limit = parseInt(request.query.limit || 20);
+    CheckinService.getCheckinsByUserId(userId, offset, limit)
+        .then(
+            function onSuccess(data) {
+                _this.sendSuccess(response, data);
+            },
+            function onError(error) {
+                if (error && (error instanceof Error)) {
+                    error = error.message;
+                }
+                _this.sendServerError(response, {
+                    error: error || 'Error getting checkins'
+                });
+            }
+        );
+};
+
 
 module.exports = CheckinController;

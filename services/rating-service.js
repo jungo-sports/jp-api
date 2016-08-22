@@ -2,7 +2,8 @@ var q = require('q'),
     _ = require('lodash'),
     RatingDao = require('../persistence/rating/rating-dao'),
     Rating = require('../models/rating-model'),
-    AverageRating = require('../models/average-rating-model');
+    AverageRating = require('../models/average-rating-model'),
+    EventService = require('./event-service');
 
 function RatingService() {};
 
@@ -42,6 +43,12 @@ RatingService.prototype.addRating = function(rating) {
         .then(
             function onSuccess(data) {
                 return __updateAggregateRating(rating.entity, rating.type);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                EventService.publishEvent(EventService.keys.RATING_ADD, rating);
+                return data;
             }
         );
 };
@@ -84,6 +91,23 @@ RatingService.prototype.getRatingsByUserId = function(userId, entityId, types) {
                 });
             }
         );
+};
+
+RatingService.prototype.getRatings = function(entityId, type, offset, limit) {
+    return q.all(
+        [
+            RatingDao.getTotalRatings(entityId, type),
+            RatingDao.getRatings(entityId, type, offset, limit)
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            return {
+                total: data[0] || 0,
+                ratings: data[1] || []
+            }
+        }
+    );
 };
 
 module.exports = new RatingService();

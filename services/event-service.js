@@ -42,6 +42,11 @@ function __distributeEventToType(type, event) {
                 });
                 return q.all(insertMethods);
             }
+        )
+        .catch(
+            function onError(error) {
+                console.error(error);
+            }
         );
     return deferred.promise;
 };

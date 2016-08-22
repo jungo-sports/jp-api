@@ -11,7 +11,9 @@ module.exports = {
         notification: require('./controllers/notification-controller'),
         feed: require('./controllers/feed-controller'),
         checkin: require('./controllers/checkin-controller'),
-        friend: require('./controllers/friend-controller')
+        friend: require('./controllers/friend-controller'),
+        poke: require('./controllers/poke-controller'),
+        like: require('./controllers/like-controller')
     },
     services: {
         user: require('./services/user-service'),
@@ -19,7 +21,8 @@ module.exports = {
         follow: require('./services/follow-service'),
         event: require('./services/event-service'),
         search: require('./services/search-service'),
-        friend: require('./services/friend-service')
+        friend: require('./services/friend-service'),
+        like: require('./services/like-service')
     },
     models: {
         user: require('./models/user-model')

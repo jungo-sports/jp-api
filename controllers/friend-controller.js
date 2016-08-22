@@ -17,11 +17,15 @@ FriendController.prototype.registerAllMethods = function() {
 
     this.registerGetMethod('/user/id/:userid', this.getFriendsByUserId);
 
+    this.registerGetMethod('/user/id/:userid/friend/id/:friendid', this.getIsUserFriend);
+
     this.registerPostMethod('/', this.addFriendRequest);
 
     this.registerPostMethod('/accept', this.acceptFriendRequest);
 
     this.registerDeleteMethod('/user/id/:userid/friend/id/:friendid', this.declineFriendRequest);
+
+    this.registerDeleteMethod('/id/:id', this.deleteFriendById);
 };
 
 FriendController.prototype.getFriendsByUserId = function(request, response) {
@@ -33,6 +37,29 @@ FriendController.prototype.getFriendsByUserId = function(request, response) {
         .then(
             function onSuccess(data) {
                 _this.sendSuccess(response, data);
+            },
+            function onError(error) {
+                if (error && (error instanceof Error)) {
+                    error = error.message;
+                }
+                _this.sendServerError(response, {
+                    error: error || 'Error getting friends'
+                });
+            }
+        );
+};
+
+FriendController.prototype.getIsUserFriend = function(request, response) {
+    var _this = this,
+        userId = request.params.userid,
+        friendId = request.params.friendid;
+
+    FriendService.getIsUserFriend(userId, friendId)
+        .then(
+            function onSuccess(data) {
+                _this.sendSuccess(response, {
+                    friend: data
+                });
             },
             function onError(error) {
                 if (error && (error instanceof Error)) {
@@ -103,6 +130,26 @@ FriendController.prototype.declineFriendRequest = function(request, response) {
                 }
                 _this.sendServerError(response, {
                     error: error || 'Error declining friend request'
+                });
+            }
+        );
+};
+
+FriendController.prototype.deleteFriendById = function(request, response) {
+    var _this = this,
+        id = request.params.id;
+
+    FriendService.deleteFriendById(id)
+        .then(
+            function onSuccess(data) {
+                _this.sendSuccess(response, data);
+            },
+            function onError(error) {
+                if (error && (error instanceof Error)) {
+                    error = error.message;
+                }
+                _this.sendServerError(response, {
+                    error: error || 'Error deleting friend request'
                 });
             }
         );
