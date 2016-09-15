@@ -160,3 +160,11 @@ CREATE TABLE IF NOT EXISTS `likes` (
   UNIQUE KEY `userid` (`userid`,`type`,`entity`),
   CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `codes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) NOT NULL DEFAULT '',
+  `expires` datetime DEFAULT NULL,
+  `extra` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

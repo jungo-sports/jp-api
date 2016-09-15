@@ -22,12 +22,14 @@ module.exports = {
         event: require('./services/event-service'),
         search: require('./services/search-service'),
         friend: require('./services/friend-service'),
-        like: require('./services/like-service')
+        like: require('./services/like-service'),
+        code: require('./services/code-service')
     },
     models: {
         user: require('./models/user-model')
     },
     persistence: {
-        base: require('./persistence/base/base-dao')
+        base: require('./persistence/base/base-dao'),
+        code: require('./persistence/code/code-dao')
     }
 };

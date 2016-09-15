@@ -1,6 +1,6 @@
 {
   "name": "jp-api",
-  "version": "0.0.9",
+  "version": "0.0.8",
   "description": "API",
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,7 @@
     "pubsub-js": "^1.5.3",
     "q": "^1.4.1",
     "rand-token": "^0.2.1",
+    "randomstring": "^1.1.5",
     "slug": "^0.9.1",
     "stream": "0.0.2"
   },
