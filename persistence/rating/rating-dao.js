@@ -1,7 +1,8 @@
 var util = require('util'),
     q = require('q'),
     BaseDao = require('../base/base-dao'),
-    databaseUtils = require('../utils/database-utils');
+    databaseUtils = require('../utils/database-utils'),
+    dateUtils = require('../../utils/date-utils');
 
 function RatingDao() {
     BaseDao.call(this);
@@ -25,6 +26,29 @@ RatingDao.prototype.getRatingByUserId = function(user, entity, type) {
             }
             return data[0];
         }
+    );
+};
+
+RatingDao.prototype.getUniqueRatingCountsByUserId = function(user) {
+    return this.executeReadQuery(
+        'SELECT COUNT(DISTINCT(entity)) AS total FROM ratings WHERE userid = ?',
+        [
+            user
+        ]
+    )
+    .then(
+        function onSuccess(data) {
+            if (!data || data.length === 0) {
+                return 0;
+            }
+            return parseInt(data.total) || 0;
+        }
+    );
+};
+
+RatingDao.prototype.getUniqueRatedEntitiesByUserIds = function(userIds) {
+    return this.executeReadQuery(
+        'SELECT DISTINCT(entity), userid FROM ratings WHERE userid IN (' + userIds.join(',') + ') ORDER BY userid, date DESC'
     );
 };
 
@@ -66,7 +90,8 @@ RatingDao.prototype.addRating = function(rating) {
             entity: rating.entity,
             type: rating.type,
             rating: rating.rating,
-            comment: rating.comment
+            comment: rating.comment,
+            date: dateUtils.getUTCDate().toDate()
         }
     )
     .then(

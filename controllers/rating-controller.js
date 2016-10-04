@@ -24,6 +24,8 @@ RatingController.prototype.registerAllMethods = function() {
 
     this.registerGetMethod('/entity/:entity/type/:type', this.getRatings);
 
+    this.registerGetMethod('/unique/userids/:userids', this.getUniqueRatedEntitiesByUserIds);
+
     this.registerPostMethod('/', this.createRating);
 };
 
@@ -124,6 +126,25 @@ RatingController.prototype.getAverageRatings = function(request, response) {
                             }
                         );
                 }
+            },
+            function onError(error) {
+                if (error && (error instanceof Error)) {
+                    error = error.message;
+                }
+                _this.sendServerError(response, {
+                    error: error || 'Error getting ratings'
+                });
+            }
+        );
+};
+
+RatingController.prototype.getUniqueRatedEntitiesByUserIds = function(request, response) {
+    var _this = this,
+        userIds = request.params.userids.split(',');
+    RatingService.getUniqueRatedEntitiesByUserIds(userIds)
+        .then(
+            function onSuccess(data) {
+                _this.sendSuccess(response, data);
             },
             function onError(error) {
                 if (error && (error instanceof Error)) {

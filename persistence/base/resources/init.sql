@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `ratings` (
   `type` varchar(255) NOT NULL DEFAULT '',
   `rating` decimal(3,1) NOT NULL,
   `comment` varchar(255) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `userid_2` (`userid`,`entity`,`type`),
   KEY `userid` (`userid`),

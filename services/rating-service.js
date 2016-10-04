@@ -93,6 +93,21 @@ RatingService.prototype.getRatingsByUserId = function(userId, entityId, types) {
         );
 };
 
+RatingService.prototype.getUniqueRatingCountsByUserId = function(userId) {
+    return RatingDao.getUniqueRatingCountsByUserId(userId);
+};
+
+RatingService.prototype.getUniqueRatedEntitiesByUserIds = function(userIds) {
+    return RatingDao.getUniqueRatedEntitiesByUserIds(userIds)
+        .then(
+            function onSuccess(data) {
+                return {
+                    ratings: data
+                }
+            }
+        );
+};
+
 RatingService.prototype.getRatings = function(entityId, type, offset, limit) {
     return q.all(
         [
