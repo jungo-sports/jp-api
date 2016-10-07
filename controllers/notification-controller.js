@@ -17,7 +17,7 @@ function NotificationController(app) {
 util.inherits(NotificationController, BaseController);
 
 NotificationController.prototype.registerAllMethods = function() {
-    this.registerGetMethod('/user/id/:userid', this.getNotificationsByUserId)
+    this.registerGetMethod('/user/id/:userid', this.getNotificationsByUserId);
 };
 
 NotificationController.prototype.getNotificationsByUserId = function(request, response) {

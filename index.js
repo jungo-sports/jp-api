@@ -26,7 +26,10 @@ module.exports = {
         code: require('./services/code-service')
     },
     models: {
-        user: require('./models/user-model')
+        user: require('./models/user-model'),
+        baseevent: require('./services/events/base-event'),
+        eventmap: require('./services/events/event-map'),
+        notificationevent: require('./models/notification-event-model')
     },
     persistence: {
         base: require('./persistence/base/base-dao'),

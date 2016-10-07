@@ -21,8 +21,17 @@ function __distributeEventToType(type, event) {
                 if (!distributor) {
                     return deferred.resolve(true);
                 }
-                var method = (type === 'feed') ? 'getUserFeedDistribution' : 'getUserNotificationsDistribution';
-                return distributor[method](event);
+                var method = (type === 'feed') ? 'getUserFeedDistribution' : 'getUserNotificationsDistribution',
+                    clonedEvent = _.cloneDeep(event);
+
+                if (clonedEvent.extra) {
+                    try {
+                        clonedEvent.extra = JSON.parse(clonedEvent.extra);
+                    } catch (e) {
+                        console.warn('Unable to parse JSON for extra event data', clonedEvent.extra);
+                    }
+                }
+                return distributor[method](clonedEvent);
             },
             function onError(error) {
                 deferred.resolve(false);
@@ -59,7 +68,15 @@ function __getActionsForEvent(event) {
                 if (!distributor) {
                     return deferred.resolve(true);
                 }
-                return distributor['getActionForEvent'](event);
+                var clonedEvent = _.cloneDeep(event);
+                if (clonedEvent.extra) {
+                    try {
+                        clonedEvent.extra = JSON.parse(clonedEvent.extra);
+                    } catch (e) {
+                        console.warn('Unable to parse JSON for extra event data', clonedEvent.extra);
+                    }
+                }
+                return distributor['getActionForEvent'](clonedEvent);
             }
         )
         .then(
@@ -95,6 +112,9 @@ EventService.prototype.subscribeToEvent = function(key, callback) {
 
 EventService.prototype.addEvent = function(event) {
     var _this = this;
+    if (event.extra && (event.extra instanceof Object)) {
+        event.extra = JSON.stringify(event.extra);
+    }
     return EventDao.addEvent(event.type, event.entity, event.extra)
         .then(
             function onSuccess(data) {
