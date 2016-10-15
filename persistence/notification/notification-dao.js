@@ -87,4 +87,16 @@ Dao.prototype.getTotalUnreadNotifications = function(userId, types) {
     );
 };
 
+Dao.prototype.setAllNotificationsAsRead = function(userId) {
+    return this.executeWriteQuery(
+        'UPDATE notifications SET ? WHERE userid = ?',
+        [
+            {
+                unread: 0
+            },
+            userId
+        ]
+    );
+};
+
 module.exports = new Dao();

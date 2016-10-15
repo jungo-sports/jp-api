@@ -17,7 +17,10 @@ function NotificationController(app) {
 util.inherits(NotificationController, BaseController);
 
 NotificationController.prototype.registerAllMethods = function() {
+
     this.registerGetMethod('/user/id/:userid', this.getNotificationsByUserId);
+
+    this.registerPostMethod('/user/id/:userid/read', this.setAllNotificationsAsRead);
 };
 
 NotificationController.prototype.getNotificationsByUserId = function(request, response) {
@@ -37,6 +40,25 @@ NotificationController.prototype.getNotificationsByUserId = function(request, re
                 }
                 _this.sendServerError(response, {
                     error: error || 'Error getting notifications'
+                });
+            }
+        );
+};
+
+NotificationController.prototype.setAllNotificationsAsRead = function(request, response) {
+    var _this = this,
+        userId = request.params.userid;
+    NotificationService.setAllNotificationsAsRead(userId)
+        .then(
+            function onSuccess(data) {
+                _this.sendSuccess(response, data);
+            },
+            function onError(error) {
+                if (error && (error instanceof Error)) {
+                    error = error.message;
+                }
+                _this.sendServerError(response, {
+                    error: error || 'Error setting notifications as read'
                 });
             }
         );

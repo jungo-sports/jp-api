@@ -13,7 +13,8 @@ module.exports = {
         checkin: require('./controllers/checkin-controller'),
         friend: require('./controllers/friend-controller'),
         poke: require('./controllers/poke-controller'),
-        like: require('./controllers/like-controller')
+        like: require('./controllers/like-controller'),
+        push: require('./controllers/push-controller')
     },
     services: {
         user: require('./services/user-service'),
@@ -23,7 +24,8 @@ module.exports = {
         search: require('./services/search-service'),
         friend: require('./services/friend-service'),
         like: require('./services/like-service'),
-        code: require('./services/code-service')
+        code: require('./services/code-service'),
+        push: require('./services/push-service')
     },
     models: {
         user: require('./models/user-model'),

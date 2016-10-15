@@ -46,4 +46,8 @@ NotificationService.prototype.getNotificationsByUserId = function(userId, offset
         );
 };
 
+NotificationService.prototype.setAllNotificationsAsRead = function(userId) {
+    return NotificationDao.setAllNotificationsAsRead(userId);
+};
+
 module.exports = new NotificationService();
