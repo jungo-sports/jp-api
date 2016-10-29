@@ -22,7 +22,7 @@ RatingController.prototype.registerAllMethods = function() {
 
     this.registerGetMethod('/entity/:entity/types/:types', this.getAverageRatings);
 
-    this.registerGetMethod('/entity/:entity/type/:type', this.getRatings);
+    this.registerGetMethod('/entity/:entity/type/:types', this.getRatings);
 
     this.registerGetMethod('/unique/userids/:userids', this.getUniqueRatedEntitiesByUserIds);
 
@@ -72,11 +72,11 @@ RatingController.prototype.getRatingsByUserId = function(request, response) {
 RatingController.prototype.getRatings = function(request, response) {
     var _this = this,
         entity = request.params.entity,
-        type = request.params.type,
+        types = request.params.types.split(','),
         offset = request.query.offset || 0,
         limit = request.query.limit || 25;
 
-    RatingService.getRatings(entity, type, offset, limit)
+    RatingService.getRatings(entity, types, offset, limit)
         .then(
             function onSuccess(data) {
                 __populateUsersForRatings(data.ratings)
@@ -101,6 +101,8 @@ RatingController.prototype.getAverageRatings = function(request, response) {
     var _this = this,
         types = request.params.types.split(','),
         entity = request.params.entity,
+        offset = parseInt(request.query.offset) || 0,
+        limit = parseInt(request.query.limit) || 25,
         asUserId = request.query.asuserid;
     RatingService.getAverageRatings(entity, types)
         .then(

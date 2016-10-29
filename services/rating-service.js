@@ -37,8 +37,11 @@ function __updateAggregateRating(entity, type) {
         );
 };
 
-RatingService.prototype.addRating = function(rating) {
+RatingService.prototype.addRating = function(rating, options) {
     rating = new Rating(rating);
+    options = options || {
+        publishEvent: true
+    };
     return RatingDao.addRating(rating)
         .then(
             function onSuccess(data) {
@@ -47,7 +50,9 @@ RatingService.prototype.addRating = function(rating) {
         )
         .then(
             function onSuccess(data) {
-                EventService.publishEvent(EventService.keys.RATING_ADD, rating);
+                if (options.publishEvent) {
+                    EventService.publishEvent(EventService.keys.RATING_ADD, rating);
+                }
                 return data;
             }
         );
@@ -108,11 +113,11 @@ RatingService.prototype.getUniqueRatedEntitiesByUserIds = function(userIds) {
         );
 };
 
-RatingService.prototype.getRatings = function(entityId, type, offset, limit) {
+RatingService.prototype.getRatings = function(entityId, types, offset, limit) {
     return q.all(
         [
-            RatingDao.getTotalRatings(entityId, type),
-            RatingDao.getRatings(entityId, type, offset, limit)
+            RatingDao.getTotalRatings(entityId, types),
+            RatingDao.getRatings(entityId, types, offset, limit)
         ]
     )
     .then(

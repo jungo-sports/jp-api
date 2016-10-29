@@ -135,23 +135,23 @@ RatingDao.prototype.addAggregateRating = function(entity, type, rating, total) {
     );
 };
 
-RatingDao.prototype.getRatings = function(entity, type, offset, limit) {
+RatingDao.prototype.getRatings = function(entity, types, offset, limit) {
     var limitQuery = databaseUtils.getLimitForQuery(offset, limit);
     return this.executeReadQuery(
-        'SELECT * FROM ratings WHERE entity = ? AND type = ? ORDER BY id ASC LIMIT ' + limitQuery,
+        'SELECT * FROM ratings WHERE entity = ? AND type IN (?) ORDER BY date DESC LIMIT ' + limitQuery,
         [
             entity,
-            type
+            types
         ]
     );
 };
 
-RatingDao.prototype.getTotalRatings = function(entity, type) {
+RatingDao.prototype.getTotalRatings = function(entity, types) {
     return this.executeReadQuery(
-        'SELECT COUNT(*) AS total FROM ratings WHERE entity = ? AND type = ?',
+        'SELECT COUNT(*) AS total FROM ratings WHERE entity = ? AND type IN (?)',
         [
             entity,
-            type
+            types
         ]
     )
     .then(
