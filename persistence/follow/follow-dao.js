@@ -83,8 +83,17 @@ FollowDao.prototype.getTotalFollowersForUserId = function(userId) {
     );
 };
 
-FollowDao.prototype.getFollowingForUserId = function(userId, offset, limit) {
+FollowDao.prototype.getFollowingForUserId = function(userId, offset, limit, type) {
     var limitQuery = databaseUtils.getLimitForQuery(offset, limit);
+    if (type) {
+        return this.executeReadQuery(
+            'SELECT * FROM followers WHERE followerid = ? AND type = ? LIMIT ' + limitQuery,
+            [
+                userId,
+                type
+            ]
+        );
+    }
     return this.executeReadQuery(
         'SELECT * FROM followers WHERE followerid = ? LIMIT ' + limitQuery,
         [
@@ -93,7 +102,25 @@ FollowDao.prototype.getFollowingForUserId = function(userId, offset, limit) {
     );
 };
 
-FollowDao.prototype.getTotalFollowingForUserId = function(userId) {
+FollowDao.prototype.getTotalFollowingForUserId = function(userId, type) {
+    if (type) {
+        return this.executeReadQuery(
+            'SELECT COUNT(*) AS total FROM followers WHERE followerid = ? AND type = ?',
+            [
+                userId,
+                type
+            ]
+        )
+        .then(
+            function onSuccess(data) {
+                data = (data instanceof Array) ? data : [];
+                if (data.length > 0) {
+                    data = data[0];
+                }
+                return data.total || 0;
+            }
+        );
+    }
     return this.executeReadQuery(
         'SELECT COUNT(*) AS total FROM followers WHERE followerid = ?',
         [
@@ -111,13 +138,14 @@ FollowDao.prototype.getTotalFollowingForUserId = function(userId) {
     );
 };
 
-FollowDao.prototype.addFollower = function(userId, followerId) {
+FollowDao.prototype.addFollower = function(userId, followerId, type) {
     var deferred = q.defer();
     this.executeWriteQuery(
         'INSERT INTO followers SET ?',
         {
             userid: userId,
             followerid: followerId,
+            type: type,
             followdate: dateUtils.getUTCDate().toDate()
         }
     )

@@ -44,8 +44,8 @@ FollowService.prototype.getIsUserFollowingList = function(userId, followerIds) {
         );
 };
 
-FollowService.prototype.addFollower = function(userId, followerId) {
-    return FollowDao.addFollower(userId, followerId)
+FollowService.prototype.addFollower = function(userId, followerId, type) {
+    return FollowDao.addFollower(userId, followerId, type)
         .then(
             function onSuccess(data) {
                 return FollowDao.getFollowerById(data.id);
@@ -95,13 +95,13 @@ FollowService.prototype.getFollowers = function(userId, offset, limit) {
         );
 };
 
-FollowService.prototype.getFollowing = function(userId, offset, limit) {
+FollowService.prototype.getFollowing = function(userId, offset, limit, type) {
     var followers = [];
-    return FollowDao.getFollowingForUserId(userId, offset, limit)
+    return FollowDao.getFollowingForUserId(userId, offset, limit, type)
         .then(
             function onGetFollowersSuccess(data) {
                 followers = data;
-                return FollowDao.getTotalFollowingForUserId(userId);
+                return FollowDao.getTotalFollowingForUserId(userId, type);
             }
         )
         .then(

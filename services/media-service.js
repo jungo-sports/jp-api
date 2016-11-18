@@ -16,18 +16,14 @@ function MediaService() {
 
 MediaService.prototype.uploadImage = function(imageData, key) {
     var _this = this,
-        deferred = q.defer(),
-        dataStream = new stream.Readable();
-
-    dataStream._read = function noop(){};
-    dataStream.push(new Buffer(imageData, 'base64'));
-    dataStream.push(null);
+        deferred = q.defer();
 
     this.client.upload(
         {
             Bucket: _this.bucket,
             Key: key,
-            Body: dataStream,
+            Body: new Buffer(imageData.replace(/^data:image\/\w+;base64,/, ''), 'base64'),
+            ContentEncoding: 'base64',
             ContentType: 'image/jpeg',
             ACL: 'public-read'
         }, 

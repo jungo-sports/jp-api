@@ -93,9 +93,10 @@ FollowController.prototype.getFollowing = function(request, response) {
     var _this = this,
         userId = request.params.userid,
         offset = request.query.offset || 0,
-        limit = request.query.limit || 25;
+        limit = request.query.limit || 25,
+        type = request.query.type;
 
-    FollowService.getFollowing(userId, offset, limit)
+    FollowService.getFollowing(userId, offset, limit, type)
         .then(
             function onSuccess(data) {
                 if (data && data.follows && data.follows.length > 0) {
@@ -123,9 +124,10 @@ FollowController.prototype.getFollowing = function(request, response) {
 FollowController.prototype.addFollower = function(request, response) {
     var _this = this,
         userId = request.body.userid,
-        followerId = request.body.followerid;
+        followerId = request.body.followerid,
+        type = request.body.type;
 
-    FollowService.addFollower(userId, followerId)
+    FollowService.addFollower(userId, followerId, type)
         .then(
             function onSuccess(data) {
                 _this.sendSuccess(response, data);

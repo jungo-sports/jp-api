@@ -36,5 +36,8 @@ module.exports = {
     persistence: {
         base: require('./persistence/base/base-dao'),
         code: require('./persistence/code/code-dao')
+    },
+    utils: {
+        date: require('./utils/date-utils')
     }
 };
