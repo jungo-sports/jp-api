@@ -2,6 +2,7 @@ var path = require('path'),
     apiConfig = require('../../utils/api-config'),
     mysqlReadCredentials = apiConfig.get('services.mysql.read'),
     mysqlReadWriteCredentials = apiConfig.get('services.mysql.readwrite'),
+    autoDLL = apiConfig.get('services.mysql.autodll'),
     MySqlConnector = require('../utils/connectors/mysql-connector');
 
 function BaseDao() {
@@ -20,7 +21,9 @@ function BaseDao() {
             mysqlReadWriteCredentials.password,
             mysqlReadWriteCredentials.database
         );
-        this.executeScript(path.resolve(__dirname, 'resources', 'init.sql'));
+        if (autoDLL === 'create') {
+            this.executeScript(path.resolve(__dirname, 'resources', 'init.sql'));
+        }
     }
 };
 
