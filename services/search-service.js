@@ -97,7 +97,8 @@ SearchService.prototype.createDocument = function(type, body) {
         {
             index: apiConfig.get('services.elasticsearch.index'),
             type: type,
-            body: body
+            body: body,
+            id: body.id
         }
     );
 };
