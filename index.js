@@ -25,7 +25,8 @@ module.exports = {
         friend: require('./services/friend-service'),
         like: require('./services/like-service'),
         code: require('./services/code-service'),
-        push: require('./services/push-service')
+        push: require('./services/push-service'),
+        media: require('./services/media-service')
     },
     models: {
         user: require('./models/user-model'),
