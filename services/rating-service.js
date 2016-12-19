@@ -93,6 +93,8 @@ RatingService.prototype.getRatingsByUserId = function(userId, entityId, types) {
             function onSuccess(data) {
                 return _.map(data, function(rating) {
                     return new Rating(rating);
+                }).filter(function(rating) {
+                    return !_.isEmpty(rating);
                 });
             }
         );
