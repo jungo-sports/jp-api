@@ -14,6 +14,7 @@ function BaseController(app, options) {
 };
 
 function __sendResponse(code, data, response) {
+    response.setHeader('Content-Type', 'application/json');
     response.status(code).send(JSON.stringify(data));
 };
 
