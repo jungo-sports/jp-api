@@ -76,7 +76,8 @@ SearchService.prototype.search = function(type, body, options) {
     return this.client.search(
         {
             type: type,
-            body: body
+            body: body,
+            index: apiConfig.get('services.elasticsearch.index')
         }
     )
     .then(
@@ -110,6 +111,7 @@ SearchService.prototype.replaceDocumentByQuery = function(type, query, body) {
     var _this = this;
     return this.client.search(
         {
+            index: apiConfig.get('services.elasticsearch.index'),
             type: type,
             body: {
                 query: query

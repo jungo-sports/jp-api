@@ -1,6 +1,6 @@
 {
   "name": "jp-api",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "API",
   "main": "index.js",
   "scripts": {
