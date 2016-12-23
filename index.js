@@ -26,7 +26,8 @@ module.exports = {
         like: require('./services/like-service'),
         code: require('./services/code-service'),
         push: require('./services/push-service'),
-        media: require('./services/media-service')
+        media: require('./services/media-service'),
+        checkin: require('./services/checkin-service')
     },
     models: {
         user: require('./models/user-model'),
