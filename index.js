@@ -40,6 +40,7 @@ module.exports = {
         code: require('./persistence/code/code-dao')
     },
     utils: {
-        date: require('./utils/date-utils')
+        date: require('./utils/date-utils'),
+        config: require('./utils/api-config')
     }
 };
