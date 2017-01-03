@@ -28,7 +28,8 @@ module.exports = {
         push: require('./services/push-service'),
         media: require('./services/media-service'),
         checkin: require('./services/checkin-service'),
-        poke: require('./services/poke-service')
+        poke: require('./services/poke-service'),
+        notification: require('./services/notification-service')
     },
     models: {
         user: require('./models/user-model'),
