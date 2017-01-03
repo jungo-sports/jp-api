@@ -26,7 +26,15 @@ NotificationService.prototype.getNotificationsByUserId = function(userId, offset
         )
         .then(
             function onSuccess(data) {
-                events = data;
+                events = data.map(function(event) {
+                    var notification = _.find(notifications, { eventid: event.event.id })
+                    if (notification) {
+                        event.undread = (notification.unread) ? true : false;
+                    } else {
+                        event.undread = false;
+                    }
+                    return event;
+                });
                 return q.all(
                     [
                         NotificationDao.getTotalNotifications(userId, types),
