@@ -29,9 +29,9 @@ NotificationService.prototype.getNotificationsByUserId = function(userId, offset
                 events = data.map(function(event) {
                     var notification = _.find(notifications, { eventid: event.event.id })
                     if (notification) {
-                        event.undread = (notification.unread) ? true : false;
+                        event.unread = (notification.unread) ? true : false;
                     } else {
-                        event.undread = false;
+                        event.unread = false;
                     }
                     return event;
                 });
