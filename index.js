@@ -43,6 +43,7 @@ module.exports = {
     },
     utils: {
         date: require('./utils/date-utils'),
-        config: require('./utils/api-config')
+        config: require('./utils/api-config'),
+        string: require('./utils/string-utils')
     }
 };
