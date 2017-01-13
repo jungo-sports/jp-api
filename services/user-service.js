@@ -208,9 +208,9 @@ UserService.prototype.createUser = function(user) {
                     return MediaService.uploadImage(user.avatar, 'user-avatar/' + user.id)
                         .then(
                             function onSuccess(data) {
-                                if (data && data.key) {
+                                if (data && data.Key) {
                                     user.extra = user.extra || {};
-                                    user.extra.avatar = data.key + '?v=' + (new Date().getTime());
+                                    user.extra.avatar = data.Key + '?v=' + (new Date().getTime());
                                 }
                             }
                         );
@@ -328,10 +328,11 @@ UserService.prototype.updateUserById = function(id, user) {
                     return MediaService.uploadImage(user.avatar, 'user-avatar/' + user.id)
                         .then(
                             function onSuccess(data) {
-                                if (data && data.key) {
+                                if (data && data.Key) {
                                     user.extra = user.extra || {};
-                                    user.extra.avatar = data.key + '?v=' + (new Date().getTime());
+                                    user.extra.avatar = data.Key + '?v=' + (new Date().getTime());
                                 }
+                                return user;
                             }
                         );
                 }
