@@ -40,6 +40,23 @@ RatingDao.prototype.getUserRatings = function(userId, offset, limit) {
     )
 };
 
+RatingDao.prototype.getTotalUserRatings = function(userId) {
+    return this.executeReadQuery(
+            'SELECT COUNT(*) FROM ratings WHERE userid = ?',
+            [
+                userId
+            ]
+        )
+        .then(
+            function onSuccess(data) {
+                if (!data || data.length === 0) {
+                    return 0;
+                }
+                return parseInt(data.total) || 0;
+            }
+        );
+};
+
 RatingDao.prototype.getUniqueRatingCountsByUserId = function(user) {
     return this.executeReadQuery(
         'SELECT COUNT(DISTINCT(entity)) AS total FROM ratings WHERE userid = ?',

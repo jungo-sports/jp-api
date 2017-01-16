@@ -101,7 +101,20 @@ RatingService.prototype.getRatingsByUserId = function(userId, entityId, types) {
 };
 
 RatingService.prototype.getUserRatings = function(userId, offset, limit) {
-    return RatingDao.getUserRatings(userId, offset, limit);
+    return q.all(
+            [
+                RatingDao.getUserRatings(userId, offset, limit),
+                RatingDao.getTotalUserRatings(userId)
+            ]
+        )
+        .then(
+            function onSuccess(data) {
+                return {
+                    ratings: data[0] || [],
+                    total: data[1] || 0
+                }
+            }
+        );
 };
 
 RatingService.prototype.getUniqueRatingCountsByUserId = function(userId) {
