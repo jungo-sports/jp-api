@@ -100,6 +100,10 @@ RatingService.prototype.getRatingsByUserId = function(userId, entityId, types) {
         );
 };
 
+RatingService.prototype.getUserRatings = function(userId, offset, limit) {
+    return RatingDao.getUserRatings(userId, offset, limit);
+};
+
 RatingService.prototype.getUniqueRatingCountsByUserId = function(userId) {
     return RatingDao.getUniqueRatingCountsByUserId(userId);
 };

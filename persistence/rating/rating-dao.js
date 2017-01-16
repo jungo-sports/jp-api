@@ -29,6 +29,17 @@ RatingDao.prototype.getRatingByUserId = function(user, entity, type) {
     );
 };
 
+RatingDao.prototype.getUserRatings = function(userId, offset, limit) {
+    return this.executeReadQuery(
+        'SELECT * FROM ratings WHERE userid = ? ORDER BY date DESC LIMIT ?, ?',
+        [
+            userId,
+            offset,
+            limit
+        ]
+    )
+};
+
 RatingDao.prototype.getUniqueRatingCountsByUserId = function(user) {
     return this.executeReadQuery(
         'SELECT COUNT(DISTINCT(entity)) AS total FROM ratings WHERE userid = ?',
