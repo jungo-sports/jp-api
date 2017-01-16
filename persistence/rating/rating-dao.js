@@ -52,7 +52,7 @@ RatingDao.prototype.getTotalUserRatings = function(userId) {
                 if (!data || data.length === 0) {
                     return 0;
                 }
-                return parseInt(data.total) || 0;
+                return parseInt(data[0].total) || 0;
             }
         );
 };
