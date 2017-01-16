@@ -42,7 +42,7 @@ RatingDao.prototype.getUserRatings = function(userId, offset, limit) {
 
 RatingDao.prototype.getTotalUserRatings = function(userId) {
     return this.executeReadQuery(
-            'SELECT COUNT(*) FROM ratings WHERE userid = ?',
+            'SELECT COUNT(*) AS total FROM ratings WHERE userid = ?',
             [
                 userId
             ]
