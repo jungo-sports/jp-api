@@ -8,12 +8,12 @@ StringUtils.prototype.getRandomToken = function(length) {
 };
 
 StringUtils.prototype.getSlug = function(term, blacklisted) {
-    var slug = slug(term);
+    var cleaned = slug(term);
     blacklisted = blacklisted || [];
     blacklisted.forEach(function(key) {
-        slug = slug.replace(key, '');
+        cleaned = cleaned.replace(key, '');
     });
-    return slug;
+    return cleaned;
 };
 
 module.exports = new StringUtils();
