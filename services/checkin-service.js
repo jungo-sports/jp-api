@@ -12,30 +12,58 @@ CheckinService.prototype.getCheckinById = function(id) {
 
 CheckinService.prototype.getCheckinsByUserId = function(userId, offset, limit) {
     return q.all(
-        [
-            CheckinDao.getCheckinsForUser(userId, offset, limit),
-            CheckinDao.getTotalCheckinsForUser(userId)
-        ]
-    )
-    .then(
-        function onSuccess(data) {
-            return {
-                total: data[1] || 0,
-                checkins: _.map(data[0] || [], function(checkin) {
-                    try {
-                        checkin.extra = JSON.parse(checkin.extra);
-                    } catch (e) {
-                        // ...
-                    }
-                    if (!checkin.extra) {
-                        checkin.extra = {};
-                    }
-                    checkin = _(checkin).omitBy(_.isNull).value();
-                    return new Checkin(checkin);
-                })
+            [
+                CheckinDao.getCheckinsForUser(userId, offset, limit),
+                CheckinDao.getTotalCheckinsForUser(userId)
+            ]
+        )
+        .then(
+            function onSuccess(data) {
+                return {
+                    total: data[1] || 0,
+                    checkins: _.map(data[0] || [], function(checkin) {
+                        try {
+                            checkin.extra = JSON.parse(checkin.extra);
+                        } catch (e) {
+                            // ...
+                        }
+                        if (!checkin.extra) {
+                            checkin.extra = {};
+                        }
+                        checkin = _(checkin).omitBy(_.isNull).value();
+                        return new Checkin(checkin);
+                    })
+                }
             }
-        }
-    )
+        )
+};
+
+CheckinService.prototype.getUpcomingCheckinsByUserId = function(userId, offset, limit) {
+    return q.all(
+            [
+                CheckinDao.getUpcomingCheckinsForUser(userId, offset, limit),
+                CheckinDao.getTotalUpcomingCheckinsForUser(userId)
+            ]
+        )
+        .then(
+            function onSuccess(data) {
+                return {
+                    total: data[1] || 0,
+                    checkins: _.map(data[0] || [], function(checkin) {
+                        try {
+                            checkin.extra = JSON.parse(checkin.extra);
+                        } catch (e) {
+                            // ...
+                        }
+                        if (!checkin.extra) {
+                            checkin.extra = {};
+                        }
+                        checkin = _(checkin).omitBy(_.isNull).value();
+                        return new Checkin(checkin);
+                    })
+                }
+            }
+        )
 };
 
 CheckinService.prototype.addCheckinEvent = function(userId, type, extra) {

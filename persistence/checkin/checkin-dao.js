@@ -56,6 +56,37 @@ Dao.prototype.getTotalCheckinsForUser = function(userId) {
     );
 };
 
+Dao.prototype.getUpcomingCheckinsForUser = function(userId, offset, limit) {
+    return this.executeReadQuery(
+        'SELECT * FROM checkins WHERE userid = ? AND startdate > ? ORDER BY startdate ASC LIMIT ?, ?',
+        [
+            userId,
+            dateUtils.getUTCDate().toDate(),
+            offset,
+            limit
+        ]
+    )
+};
+
+Dao.prototype.getTotalUpcomingCheckinsForUser = function(userId) {
+    return this.executeReadQuery(
+            'SELECT COUNT(id) AS total FROM checkins WHERE userid = ? AND startdate > ?',
+            [
+                userId,
+                dateUtils.getUTCDate().toDate()
+            ]
+        )
+        .then(
+            function onSuccess(data) {
+                data = (data instanceof Array) ? data : [];
+                if (data.length > 0) {
+                    data = data[0];
+                }
+                return data.total || 0;
+            }
+        );
+};
+
 Dao.prototype.addCheckinEvent = function(userId, type, extra) {
     var deferred = q.defer(),
         parameters = {
