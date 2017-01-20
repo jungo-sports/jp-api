@@ -205,13 +205,18 @@ UserService.prototype.createUser = function(user) {
         .then(
             function onSuccess(data) {
                 if (user.avatar) {
+
                     return MediaService.uploadImage(user.avatar, 'user-avatar/' + user.id)
                         .then(
                             function onSuccess(data) {
+                                var sizes = (apiConfig.has('user.avatar.sizes')) ? apiConfig.get('user.avatar.sizes') : [];
                                 if (data && data.Key) {
                                     user.extra = user.extra || {};
                                     user.extra.avatar = data.Key + '?v=' + (new Date().getTime());
                                 }
+                                return q.all(sizes.map(function(size) {
+                                    return MediaService.uploadImage(user.avatar, 'user-avatar/' + size + '/' + user.id, { size: size });
+                                }));
                             }
                         );
                 }
