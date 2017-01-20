@@ -14,7 +14,27 @@ var _ = require('lodash'),
     EventService = require('./event-service'),
     MediaService = require('./media-service');
 
-function UserService() {};
+function UserService() {}
+
+function __getUserAvatarParam(avatar) {
+    var avatarSizes = {},
+        sizes = (apiConfig.has('user.avatar.sizes')) ? apiConfig.get('user.avatar.sizes') : [];
+    if (avatar) {
+        avatarSizes.original = apiConfig.get('paths.images') + avatar;
+    } else {
+        avatarSizes.original = 'http://www.gravatar.com/avatar?d=mm&s=250';
+    }
+    sizes.forEach(function(size) {
+        if (avatar) {
+            var sizeAvatar = avatar.split('/');
+            sizeAvatar.splice(1, 0, size);
+            avatarSizes[size] = apiConfig.get('paths.images') + sizeAvatar.join('/');
+        } else {
+            avatarSizes[size] = 'http://www.gravatar.com/avatar?d=mm&s=' + size;
+        }
+    });
+    return avatarSizes;
+}
 
 function __getUserByCriteria(criteria) {
     var user;
@@ -35,15 +55,13 @@ function __getUserByCriteria(criteria) {
                 }
                 _.forEach(data, function(value) {
                     if (value.field === 'avatar') {
-                        user[value.field] = apiConfig.get('paths.images') + value.value;
+                        user.avatars = __getUserAvatarParam(value.value);
                     } else {
                         user[value.field] = value.value;
                     }
                 });
-                if (!user.avatar) {
-                    
-                    // Pull from config?
-                    user.avatar = 'http://www.gravatar.com/avatar?d=mm&s=100';
+                if (!user.avatars) {
+                    user.avatars = __getUserAvatarParam();
                 }
                 return user;
             }
@@ -59,6 +77,9 @@ UserService.prototype.getAllUsers = function(offset, limit, options) {
         )
         .then(
             function onSuccess(data) {
+                if (!data || data.length === 0) {
+                    return [];
+                }
                 var ids = _.map(data, 'id');
                 users = _.keyBy(data, 'id');
                 return UserDao.getUsersExtraData(ids);
@@ -111,14 +132,12 @@ UserService.prototype.getUsersByIds = function(ids) {
                     if (users[id]) {
 
                         if (value.field === 'avatar') {
-                            users[id][value.field] = apiConfig.get('paths.images') + value.value;
+                            users[id]['avatars'] = __getUserAvatarParam(value.value);
                         } else {
                             users[id][value.field] = value.value;
                         }
-                        if (!users[id].avatar) {
-                    
-                            // Pull from config?
-                            users[id].avatar = 'http://www.gravatar.com/avatar?d=mm&s=100';
+                        if (!users[id].avatars) {
+                            users[id]['avatars'] = __getUserAvatarParam();
                         }
                     }
                 });
@@ -333,11 +352,15 @@ UserService.prototype.updateUserById = function(id, user) {
                     return MediaService.uploadImage(user.avatar, 'user-avatar/' + user.id)
                         .then(
                             function onSuccess(data) {
+
+                                var sizes = (apiConfig.has('user.avatar.sizes')) ? apiConfig.get('user.avatar.sizes') : [];
                                 if (data && data.Key) {
                                     user.extra = user.extra || {};
                                     user.extra.avatar = data.Key + '?v=' + (new Date().getTime());
                                 }
-                                return user;
+                                return q.all(sizes.map(function(size) {
+                                    return MediaService.uploadImage(user.avatar, 'user-avatar/' + size + '/' + user.id, { size: size });
+                                }));
                             }
                         );
                 }
