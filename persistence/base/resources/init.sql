@@ -179,3 +179,31 @@ CREATE TABLE IF NOT EXISTS `devices` (
   KEY `userid` (`userid`),
   CONSTRAINT `devices_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `fromuser` int(11) unsigned NOT NULL,
+  `touser` int(11) unsigned NOT NULL,
+  `message` varchar(255) NOT NULL DEFAULT '',
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fromuser` (`fromuser`),
+  KEY `touser` (`touser`),
+  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`fromuser`) REFERENCES `users` (`id`),
+  CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`touser`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `messages_threads` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `fromuser` int(11) unsigned NOT NULL,
+  `touser` int(11) unsigned NOT NULL,
+  `latestmessage` int(11) unsigned NOT NULL,
+  `latestmessagedate` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fromuser` (`fromuser`),
+  KEY `touser` (`touser`),
+  KEY `latestmessage` (`latestmessage`),
+  CONSTRAINT `messages_threads_ibfk_1` FOREIGN KEY (`fromuser`) REFERENCES `users` (`id`),
+  CONSTRAINT `messages_threads_ibfk_2` FOREIGN KEY (`touser`) REFERENCES `users` (`id`),
+  CONSTRAINT `messages_threads_ibfk_3` FOREIGN KEY (`latestmessage`) REFERENCES `messages` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
