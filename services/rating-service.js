@@ -42,7 +42,6 @@ RatingService.prototype.addRating = function(rating, options) {
     options = options || {
         publishEvent: true
     };
-    console.log(rating);
     return RatingDao.addRating(rating)
         .then(
             function onSuccess(data) {
