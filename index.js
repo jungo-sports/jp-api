@@ -44,5 +44,9 @@ module.exports = {
         date: require('./utils/date-utils'),
         config: require('./utils/api-config'),
         string: require('./utils/string-utils')
+    },
+    errors: {
+        notfound: require('./models/errors/not-found-error'),
+        duplicate: require('./models/errors/duplicate-entry-error')
     }
 };
