@@ -28,7 +28,8 @@ module.exports = {
         checkin: require('./services/checkin-service'),
         poke: require('./services/poke-service'),
         notification: require('./services/notification-service'),
-        message: require('./services/message-service')
+        message: require('./services/message-service'),
+        facebook: require('./services/facebook-service')
     },
     models: {
         user: require('./models/user-model'),
@@ -47,6 +48,7 @@ module.exports = {
     },
     errors: {
         notfound: require('./models/errors/not-found-error'),
-        duplicate: require('./models/errors/duplicate-entry-error')
+        duplicate: require('./models/errors/duplicate-entry-error'),
+        invaliddata: require('./models/errors/invalid-data-error')
     }
 };
