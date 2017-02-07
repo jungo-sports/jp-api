@@ -90,4 +90,32 @@ CheckinService.prototype.addCheckinEvent = function(userId, type, extra) {
         );
 };
 
+CheckinService.prototype.updateCheckinEvent = function(id, type, extra) {
+    extra = (extra instanceof Object) ? extra : {};
+    if ((!extra.longitude || !extra.latitude) && !extra.name) {
+        var deferred = q.defer();
+        deferred.reject('Either longitude and latitude, or name is required');
+        return deferred.promise;
+    }
+    if (extra.extra) {
+        extra.extra = JSON.stringify(extra.extra);
+    }
+    return CheckinDao.updateCheckinEvent(id, type, extra)
+        .then(
+            function onSuccess(data) {
+                return CheckinDao.getCheckinById(data.id);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                EventService.publishEvent(EventService.keys.CHECKIN_ADD, new Checkin(data));
+                return data;
+            }
+        );
+};
+
+CheckinService.prototype.deleteCheckinEvent = function(id) {
+    return CheckinDao.deleteCheckinEvent(id);
+};
+
 module.exports = new CheckinService();

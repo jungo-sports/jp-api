@@ -140,4 +140,68 @@ Dao.prototype.addCheckinEvent = function(userId, type, extra) {
     return deferred.promise;
 };
 
+Dao.prototype.updateCheckinEvent = function(id, type, extra) {
+    var deferred = q.defer(),
+        parameters = {
+            type: type
+        };
+
+    extra = (extra instanceof Object) ? extra : {};
+    if (extra.longitude) {
+        parameters.longitude = extra.longitude;
+    }
+    if (extra.latitude) {
+        parameters.latitude = extra.latitude;
+    }
+    if (extra.name) {
+        parameters.name = extra.name;
+    }
+    if (extra.description) {
+        parameters.description = extra.description;
+    }
+    if (extra.startdate) {
+        parameters.startdate = extra.startdate;
+    } else {
+        parameters.startdate = dateUtils.getUTCDate().toDate()
+    }
+    if (extra.enddate) {
+        parameters.enddate = extra.enddate;
+    } else {
+        parameters.enddate = dateUtils.getUTCDate().toDate()
+    }
+    if (extra.extra) {
+        parameters.extra = extra.extra;
+    }
+    this.executeWriteQuery(
+            'UPDATE checkins SET ? WHERE id = ?',
+            [
+                parameters,
+                id
+            ]
+        )
+        .then(
+            function onSuccess(data) {
+                if (data && data.affectedRows) {
+                    return deferred.resolve({
+                        id: data.insertId
+                    });
+                }
+                deferred.reject('Unknown error adding checkin event');
+            },
+            function onError(error) {
+                deferred.reject('Error adding checkin event ' + databaseUtils.getErrorByCode(error.code));
+            }
+        );
+    return deferred.promise;
+};
+
+Dao.prototype.deleteCheckinEvent = function(id) {
+    return this.executeWriteQuery(
+        'DELETE FROM checkins WHERE id = ?',
+        [
+            id
+        ]
+    );
+};
+
 module.exports = new Dao();
