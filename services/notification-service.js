@@ -33,6 +33,7 @@ NotificationService.prototype.getNotificationsByUserId = function(userId, offset
                     } else {
                         event.unread = false;
                     }
+                    event.notificationId = notification.id;
                     return event;
                 });
                 return q.all(
@@ -56,6 +57,10 @@ NotificationService.prototype.getNotificationsByUserId = function(userId, offset
 
 NotificationService.prototype.setAllNotificationsAsRead = function(userId) {
     return NotificationDao.setAllNotificationsAsRead(userId);
+};
+
+NotificationService.prototype.deleteNotificationById = function(id) {
+    return NotificationDao.deleteNotificationById(id);
 };
 
 module.exports = new NotificationService();

@@ -149,4 +149,8 @@ RatingService.prototype.getRatings = function(entityId, types, offset, limit) {
     );
 };
 
+RatingService.prototype.getAverageRatingsForEntities = function(entityIds, type) {
+    return RatingDao.getAverageRatingsForEntities(entityIds, type);
+};
+
 module.exports = new RatingService();

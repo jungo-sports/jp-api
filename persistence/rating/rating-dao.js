@@ -193,4 +193,14 @@ RatingDao.prototype.getTotalRatings = function(entity, types) {
     );
 };
 
+RatingDao.prototype.getAverageRatingsForEntities = function(entityIds, type) {
+    return this.executeReadQuery(
+        'SELECT * FROM ratings_aggregates WHERE entity IN (?) AND type = ?',
+        [
+            entityIds,
+            type
+        ]
+    )
+};
+
 module.exports = new RatingDao();

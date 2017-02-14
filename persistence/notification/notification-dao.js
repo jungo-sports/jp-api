@@ -99,4 +99,13 @@ Dao.prototype.setAllNotificationsAsRead = function(userId) {
     );
 };
 
+Dao.prototype.deleteNotificationById = function(id) {
+    return this.executeWriteQuery(
+        'DELETE FROM notifications WHERE id = ?',
+        [
+            id
+        ]
+    )
+};
+
 module.exports = new Dao();
