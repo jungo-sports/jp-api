@@ -150,6 +150,15 @@ Dao.prototype.updateLatestMessageThreadById = function(id, latestMessageId, late
     );
 };
 
+Dao.prototype.deleteMessageThreadById = function(id) {
+    return this.executeWriteQuery(
+        'DELETE FROM messages_threads WHERE id = ?',
+        [
+            id
+        ]
+    )
+};
+
 Dao.prototype.addMessageThread = function(fromUser, toUser, latestMessageId, latestMessageDate) {
     var deferred = q.defer();
     this.executeWriteQuery(
@@ -175,6 +184,15 @@ Dao.prototype.addMessageThread = function(fromUser, toUser, latestMessageId, lat
             }
         );
     return deferred.promise;
+};
+
+Dao.prototype.deleteMessageById = function(id) {
+    return this.executeWriteQuery(
+        'DELETE FROM messages WHERE id = ?',
+        [
+            id
+        ]
+    )
 };
 
 module.exports = new Dao();

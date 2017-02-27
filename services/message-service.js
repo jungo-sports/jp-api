@@ -119,4 +119,60 @@ Service.prototype.getMessageById = function(id) {
         );
 };
 
+
+
+Service.prototype.deleteMessageById = function(id) {
+    var _this = this,
+        messageToDelete,
+        date = dateUtils.getUTCDate().toDate();
+    return this.getMessageById(id)
+        .then(
+            function onSuccess(data) {
+                if (!data || !data.id) {
+                    throw new Error('No message found');
+                }
+                messageToDelete = data;
+                return _this.getMessagesForUsers(data.fromuser.id, data.touser.id, 0, 2);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                if (data.total <= 1) {
+                    // ...delete thread
+                    return messageDao.getMessageThreadForUsers(messageToDelete.fromuser.id, messageToDelete.touser.id)
+                        .then(
+                            function onSuccess(data) {
+                                return messageDao.deleteMessageThreadById(data.id);
+                            }
+                        )
+                } else {
+                    // ...get latest message and update
+                    var lastMessage = data.messages[0],
+                        nextMessage = data.messages[1];
+                    if ((lastMessage.id + '') === (id + '')) {
+                        return messageDao.getMessageThreadForUsers(messageToDelete.fromuser.id, messageToDelete.touser.id)
+                            .then(
+                                function onSuccess(data) {
+                                    return messageDao.updateLatestMessageThreadById(data.id, nextMessage.id, date);
+                                }
+                            );
+                    }
+                }
+                return data;
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                return messageDao.deleteMessageById(id);
+            }
+        )
+        .then(
+            function onSuccess(data) {
+                return {
+                    success: true
+                }
+            }
+        );
+};
+
 module.exports = new Service();
