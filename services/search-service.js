@@ -90,6 +90,19 @@ SearchService.prototype.search = function(type, body, options) {
     );
 };
 
+SearchService.prototype.deleteDocument = function(type, id) {
+    if (!this.client) {
+        return __getUnavailablePromise();
+    }
+    return this.client.delete(
+        {
+            index: apiConfig.get('services.elasticsearch.index'),
+            type: type,
+            id: id
+        }
+    );
+};
+
 SearchService.prototype.createDocument = function(type, body) {
     if (!this.client) {
         return __getUnavailablePromise();
