@@ -122,6 +122,11 @@ RatingService.prototype.getUniqueRatingCountsByUserId = function(userId) {
 };
 
 RatingService.prototype.getUniqueRatedEntitiesByUserIds = function(userIds) {
+    if (!userIds || userIds.length === 0) {
+        return {
+            ratings: []
+        }
+    }
     return RatingDao.getUniqueRatedEntitiesByUserIds(userIds)
         .then(
             function onSuccess(data) {
