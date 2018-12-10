@@ -112,7 +112,7 @@ RatingDao.prototype.getAverageRating = function(entity, type) {
 RatingDao.prototype.addRating = function(rating) {
     var deferred = q.defer();
     this.executeWriteQuery(
-        'INSERT INTO ratings SET ? ON DUPLICATE KEY UPDATE `rating` = VALUES(`rating`), `comment` = VALUES(`comment`)',
+        'INSERT INTO ratings SET ? ON DUPLICATE KEY UPDATE `rating` = VALUES(`rating`), `comment` = VALUES(`comment`) `date` = VALUES(`date`)',
         {
             userid: rating.userid,
             entity: rating.entity,
