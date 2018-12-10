@@ -1,7 +1,7 @@
 var _ = require('lodash'),
     q = require('q'),
-    apiConfig = require('../utils/api-config');
-    //elasticsearch = require('elasticsearch');
+    apiConfig = require('../utils/api-config'),
+    elasticsearch = require('elasticsearch');
 
 function SearchService() {
     var _this = this;
