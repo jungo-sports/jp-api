@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         env: {
             development: {
                 NODE_ENV: 'dev',
-                NODE_CONFIG_DIR : '/Users/radoslavsurov/test_server/jungo-api/etc'
+                NODE_CONFIG_DIR : '/etc/jungo/api/'
             }
         },
         express: {
