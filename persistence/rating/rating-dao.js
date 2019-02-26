@@ -83,7 +83,7 @@ RatingDao.prototype.getUniqueRatedEntitiesByUserIds = function(userIds) {
 RatingDao.prototype.getCalculatedAverageRating = function(entity, types) {
     types = (types instanceof Array) ? types : [types];
     return this.executeReadQuery(
-        'SELECT AVG(rating) AS rating, COUNT(id) AS total FROM ratings WHERE entity = ? AND type IN (?)',
+        'SELECT AVG(rating) AS rating, COUNT(id) AS total, MAX(date) as date FROM ratings WHERE entity = ? AND type IN (?)',
         [
             entity,
             types.join(',')

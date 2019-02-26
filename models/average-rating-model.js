@@ -6,7 +6,8 @@ function AverageRating(data) {
         entity: data.entity,
         type: data.type,
         rating: data.rating,
-        total: data.total
+        total: data.total,
+        date: data.date
     }).omitBy(_.isUndefined).value(); // Only 'undefined' values removed, 'null' is valid
 }
 
