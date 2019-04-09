@@ -90,6 +90,40 @@ SearchService.prototype.search = function(type, body, options) {
     );
 };
 
+SearchService.prototype.getDocuments = function () {
+    let _this = this;
+
+    if (!this.client) {
+        return __getUnavailablePromise();
+    }
+
+    return this.client.search(
+        {
+            type: 'user',
+            index: apiConfig.get('services.elasticsearch.index'),
+            body: {
+                // query: {
+                //     "match_all": {}
+                // }
+                query: {
+                    match: {
+                        role: 3
+                    }
+                }
+            },
+            size: 10000 
+        }
+    )
+    .then(
+        function onSuccess(data) {
+            return _this.getParsedResults(data);
+        }
+    )
+    .catch(error => {
+        console.log('errrooorororor', error);
+    })
+}
+
 SearchService.prototype.deleteDocument = function(type, id) {
     if (!this.client) {
         return __getUnavailablePromise();
@@ -103,10 +137,11 @@ SearchService.prototype.deleteDocument = function(type, id) {
     );
 };
 
-SearchService.prototype.createDocument = function(type, body) {
+SearchService.prototype.createDocument = function (type, body) {
     if (!this.client) {
         return __getUnavailablePromise();
     }
+    //console.log('Body', body);
     return this.client.index(
         {
             index: apiConfig.get('services.elasticsearch.index'),
@@ -114,7 +149,13 @@ SearchService.prototype.createDocument = function(type, body) {
             body: body,
             id: body.id
         }
-    );
+    )
+        .then((response) => {
+            //console.log('response', response._id);
+        })
+        .catch((error) => {
+            console.log('error here ?', error);
+        })
 };
 
 SearchService.prototype.replaceDocumentByQuery = function(type, query, body) {
