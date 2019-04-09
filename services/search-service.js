@@ -103,10 +103,11 @@ SearchService.prototype.deleteDocument = function(type, id) {
     );
 };
 
-SearchService.prototype.createDocument = function(type, body) {
+SearchService.prototype.createDocument = function (type, body) {
     if (!this.client) {
         return __getUnavailablePromise();
     }
+    //console.log('Body', body);
     return this.client.index(
         {
             index: apiConfig.get('services.elasticsearch.index'),
@@ -114,7 +115,13 @@ SearchService.prototype.createDocument = function(type, body) {
             body: body,
             id: body.id
         }
-    );
+    )
+        .then((response) => {
+            //console.log('response', response._id);
+        })
+        .catch((error) => {
+            console.log('error here ?', error);
+        })
 };
 
 SearchService.prototype.replaceDocumentByQuery = function(type, query, body) {
