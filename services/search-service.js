@@ -90,6 +90,40 @@ SearchService.prototype.search = function(type, body, options) {
     );
 };
 
+SearchService.prototype.getDocuments = function () {
+    let _this = this;
+
+    if (!this.client) {
+        return __getUnavailablePromise();
+    }
+
+    return this.client.search(
+        {
+            type: 'user',
+            index: apiConfig.get('services.elasticsearch.index'),
+            body: {
+                // query: {
+                //     "match_all": {}
+                // }
+                query: {
+                    match: {
+                        role: 3
+                    }
+                }
+            },
+            size: 10000 
+        }
+    )
+    .then(
+        function onSuccess(data) {
+            return _this.getParsedResults(data);
+        }
+    )
+    .catch(error => {
+        console.log('errrooorororor', error);
+    })
+}
+
 SearchService.prototype.deleteDocument = function(type, id) {
     if (!this.client) {
         return __getUnavailablePromise();
