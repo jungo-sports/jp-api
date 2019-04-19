@@ -91,7 +91,7 @@ SearchService.prototype.search = function(type, body, options) {
 };
 
 SearchService.prototype.getDocuments = function () {
-    let _this = this;
+    var _this = this;
 
     if (!this.client) {
         return __getUnavailablePromise();
