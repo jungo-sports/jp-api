@@ -9,8 +9,7 @@ var types = {
     FRIEND_REMOVE: 'friend.remove',
     POKE_ADD: 'poke.add',
     RATING_ADD: 'rating.add',
-    SNAP_CARD_ADD: 'snap.card.add',
-    DISCOVERY_VERIFIED: 'discovery.verified'
+    SNAP_CARD_ADD: 'snap.card.add'
 };
 
 module.exports = {
