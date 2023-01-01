@@ -23,7 +23,7 @@
     "aws-sdk": "^2.4.3",
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.0",
-    "config": "^1.20.1",
+    "config": "^3.3.8",
     "elasticsearch": "^11.0.1",
     "fb": "^1.1.1",
     "js-yaml": "^3.5.5",
